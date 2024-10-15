@@ -1,15 +1,14 @@
 import { Link, Stack } from 'expo-router';
 import { View, Text, StyleSheet, Button, Modal, TextInput } from 'react-native';
 import { useState, useEffect } from 'react';
-import { FlatList } from 'react-native-gesture-handler';
+import { FlatList, ScrollView } from 'react-native-gesture-handler';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { SQLiteProvider, useSQLiteContext } from 'expo-sqlite';
 import { Asset } from 'expo-asset';
 import * as FileSystem from 'expo-file-system';
 import * as SQLite from 'expo-sqlite';
-import { processColorsInProps } from 'react-native-reanimated/lib/typescript/reanimated2/Colors';
-
+import { Medication } from '../utils/types';
 
 
 // const loadDatabase = async () => {
@@ -26,27 +25,46 @@ import { processColorsInProps } from 'react-native-reanimated/lib/typescript/rea
 
 // }
 
-// const db = SQLite.openDatabaseSync('medications.db');
+
+
 
 export default function HomeScreen() {
   // const db = SQLite.importDatabaseFromAssetAsync(require('doserra/assets/medications.db'));
+  const db = SQLite.openDatabaseSync('medications.db');
 
-  const [medications, setMedications] = useState<string[]>(['Aspirin', 'coochie']);
+  
+  const [medications, setMedications] = useState<string[]>(['Aspirin', 'coochie', 'buns']);
   const [modalVisible, setModalVisible] = useState(false);
   const [newMedication, setNewMedication] = useState('');
+  const [startDate, setStartDate] = useState(new Date());
+  const [endDate, setEndDate] = useState(new Date());
+  const [pickerMode, setPickerMode] = useState('date');
+  const [dosage, setDosage] = useState<string>('');
+  const [test, setTest] = useState('');
 
-
-  const handleAddMedication = () => {
-
-      setMedications((prevMedications) => [...prevMedications, newMedication]);
-      setNewMedication('');
-      setModalVisible(false);
-      
-  };
+  useEffect(() => {
+    db.execSync('CREATE TABLE IF NOT EXISTS medications (id INTEGER PRIMARY KEY NOT NULL, name TEXT NOT NULL, dosage TEXT NOT NULL, startDate TEXT NOT NULL, endDate TEXT NOT NULL)');
+    // clear table
+    // db.execSync('DELETE FROM medications');
+    // db.execSync('INSERT INTO medications (name, dosage, startDate, endDate) VALUES ("Aspirin"');
+    
+    
+  }, []);
   
+  const handleAddMedication = () => {
+    setMedications((prevMedications) => [...prevMedications, newMedication]);
+    setNewMedication('');
+    setModalVisible(false);
+    
+    db.runSync('INSERT INTO medications (name, dosage, startDate, endDate) VALUES (?, 100, 10-10-10, 11-11-11)', newMedication);      
+    const result = db.runSync('DUMP medications');
+    console.warn(result);
+  };
   
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
+    <ScrollView>
+    <SQLiteProvider databaseName='medications.db'>
     <SafeAreaView style={styles.container}>
         <Stack.Screen
         options={{
@@ -60,13 +78,14 @@ export default function HomeScreen() {
       
         </Stack.Screen>
       {/* <SQLiteProvider databaseName='medications.db' assetSource={{ assetId: require('doserra/assets/medications.db') }}> */}
-        <Text style={styles.title}>Home</Text> 
-      <Link href="/details/novocane">Go to Details</Link>
-      <Content medications={medications}/>
+        <Text style={styles.title}>Medications</Text> 
+      {/* <Link href="/details/novocane">Go to Details</Link> */}
+      <Content medications={medications} setMedications={setMedications}/>
+
 
       <Modal
         visible={modalVisible}
-        animationType='fade'
+        animationType='slide'
         transparent={false}
         onRequestClose={() => setModalVisible(false)}
       >
@@ -77,7 +96,18 @@ export default function HomeScreen() {
               onChangeText={(text) => setNewMedication(text)}
               value={newMedication}
               style={styles.input}
+              autoFocus={true}
             />
+
+            <TextInput
+              placeholder='Dosage'
+              keyboardType='numeric'
+              onChangeText={(text) => setDosage(text)}
+              style={styles.input}
+            />
+
+
+
             <Button
               title='Add'
               onPress={handleAddMedication}
@@ -99,65 +129,65 @@ export default function HomeScreen() {
 
       {/* </SQLiteProvider> */}
     </SafeAreaView>
+    </SQLiteProvider>
+    </ScrollView>
     </GestureHandlerRootView>
   );
 }
 
 
-// export function Header() {
-
-// }
-
-interface Medication {
-  name: string;
-}
 
 type ContentProps = {
   medications: string[];
+  setMedications: (medications: string[]) => void;
 }
-
+ 
 export function Content( props: ContentProps) {
-  // const db = useSQLiteContext();
-  // const [medications, setMedications] = useState<Medication[]>([]);
-
-  
-
+  const db = useSQLiteContext();
   useEffect(() => {
     async function fetchMedications() {
-      // const result = await db.getAllAsync<Medication>('SELECT * FROM medications');
-      // setMedications(result);
+      const result = await db.getAllAsync<Medication>('SELECT * FROM medications');
+      props.setMedications(result.map((medication) => medication.name));
     }
 
     fetchMedications();
   }, []);
 
   return (
-    <View>
-      <Text>Medications:</Text>
-      <FlatList
-        data={props.medications}
-        renderItem={({item}) => 
-        <View style={styles.medication}>
+    <View style={styles.contentContainer}>
+      {props.medications.map((medication, index) => (
+        <View key={index} style={styles.medication}>
           <Link
             href={{ 
               pathname: '/details/[medication]',
-              params: { medication: item } 
-            }}>
-            {item}
+              params: { medication: medication } 
+            }}
+            style={styles.medicationText}
+            >
+            {medication}
           </Link>
-        </View>}
-      ></FlatList>
+        </View>
+      ))} 
     </View>
   );
 
 }
 
-
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    // flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  contentContainer: {
+    padding: 10,
+    width: '100%',
+  },
+
+  medicationText: {
+    fontSize: 17,
+    textAlign: 'center',
+
   },
 
   medication: {
@@ -167,6 +197,8 @@ const styles = StyleSheet.create({
     borderColor: '#ddd',
     borderWidth: 1,
     borderRadius: 5,
+    width: '65%',
+    alignSelf: 'center',
   },
 
   header: {
@@ -192,7 +224,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     padding: 10,
     marginBottom: 15,
-    width: '100%',
+    width: 100,
     color: 'white'
   },
   button: {
