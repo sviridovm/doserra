@@ -2,9 +2,8 @@ import { SQLiteProvider, useSQLiteContext } from "expo-sqlite";
 import { useState } from "react";
 import { Alert, Pressable, TextInput, View, StyleSheet, Text } from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { initDatabase } from '../hooks/initDatabase';
-import { Stack, router } from "expo-router";
 
+import { initDatabase } from '../../hooks/initDatabase';
 
 
 export default function HomeScreen() {
@@ -183,4 +182,3 @@ const styles = StyleSheet.create({
       marginBottom: 30,
     }
   });
-

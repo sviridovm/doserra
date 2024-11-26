@@ -15,8 +15,9 @@ export default function RootLayout() {
           fontWeight: 'bold',
         },
       }}>
-          <Stack.Screen name="index" />
+          <Stack.Screen name="home" />
           <Stack.Screen name="details" />
+          <Stack.Screen name="auth" />
     </Stack>
   );
 }

@@ -39,22 +39,22 @@ export function MedicationDetails() {
   useEffect( () => {
     async function fetchMedicationData() {
       // const result = await db.runAsync('SELECT * FROM medications WHERE name = ?', [medication]);
-      const statement = await db.prepareAsync('SELECT * FROM medications WHERE name = ?');
-      try {
-        const result = await statement.executeAsync<Medication>({ name: medication});
-        // setEndDate(result.endDate);
+      // const statement = await db.prepareAsync('SELECT * FROM medications WHERE name = ?');
+      // try {
+      //   const result = await statement.executeAsync<Medication>({name: medication});
+      //   // setEndDate(result.endDate);
         
-        for await (const row of result) {
-          setEndDate(row.endDate);
-          setDosage(row.dosage);
-          setStartDate(row.startDate);
-          break;
-        }
+      //   for await (const row of result) {
+      //     setEndDate(row.endDate);
+      //     setDosage(row.dosage);
+      //     setStartDate(row.startDate);
+      //     break;
+      //   }
 
         
-      } finally {
-        await statement.finalizeAsync();
-      }
+      // } finally {
+      //   await statement.finalizeAsync();
+      // }
       
       fetchMedicationData();
 
