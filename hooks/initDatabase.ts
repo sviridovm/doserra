@@ -10,7 +10,8 @@ export const initDatabase = async(db: SQLite.SQLiteDatabase) => {
                 name TEXT NOT NULL,
                 dosage INTEGER NOT NULL,
                 start_date TEXT NOT NULL,
-                end_date TEXT NOT NULL
+                end_date TEXT NOT NULL,
+                username TEXT NOT NULL
             );
         `);
   

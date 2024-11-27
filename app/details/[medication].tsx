@@ -15,6 +15,7 @@ export default function DetailsScreen() {
       <ScrollView>
         <SQLiteProvider databaseName='medications.db'>
           <SafeAreaView style={styles.container}>
+            <MedicationDetails />
           </SafeAreaView>
         </SQLiteProvider>
       </ScrollView>
@@ -22,11 +23,13 @@ export default function DetailsScreen() {
   );
 }
 
-export function MedicationDetails() {
+const MedicationDetails = () => {
   const db = useSQLiteContext();
   const medication = String(useLocalSearchParams());
+  // !PLACEHOLDER
+  const username = '1';
   const [endDate, setEndDate] = useState(new Date());
-  const [dosage, setDosage] = useState('');
+  const [dosage, setDosage] = useState(0);
   const [startDate, setStartDate] = useState(new Date());
   const [timeUnits, setTimeUnits] = useState({
         years: 0,
@@ -37,28 +40,21 @@ export function MedicationDetails() {
     });
 
   useEffect( () => {
-    async function fetchMedicationData() {
-      // const result = await db.runAsync('SELECT * FROM medications WHERE name = ?', [medication]);
-      // const statement = await db.prepareAsync('SELECT * FROM medications WHERE name = ?');
-      // try {
-      //   const result = await statement.executeAsync<Medication>({name: medication});
-      //   // setEndDate(result.endDate);
-        
-      //   for await (const row of result) {
-      //     setEndDate(row.endDate);
-      //     setDosage(row.dosage);
-      //     setStartDate(row.startDate);
-      //     break;
-      //   }
+    function fetchMedicationData() {
+      console.log('here');
+      const result = db.getFirstSync<QueryResult>('SELECT * FROM medications WHERE name = ? AND username = ?', [medication, '1']);  
 
-        
-      // } finally {
-      //   await statement.finalizeAsync();
-      // }
+      if (result) {
+        setEndDate(new Date(result.end_date));
+        setDosage(result.dosage);
+        setStartDate(new Date(result.start_date));
+      } 
+      console.error("penus");
+      console.error(result);
       
-      fetchMedicationData();
-
     }
+      
+    fetchMedicationData();
   }, []);
 
   return (
@@ -71,6 +67,13 @@ export function MedicationDetails() {
 
 }
 
+type QueryResult = {
+  end_date: string;
+  dosage: number;
+  start_date: string;
+  medication: string;
+  username: string;
+}
 
 export function CountdownTimer() {
   const medication = String(useLocalSearchParams());

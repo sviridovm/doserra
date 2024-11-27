@@ -14,10 +14,14 @@ export default function RootLayout() {
         headerTitleStyle: {
           fontWeight: 'bold',
         },
-      }}>
-          <Stack.Screen name="home" />
-          <Stack.Screen name="details" />
-          <Stack.Screen name="auth" />
+        headerShown: false
+      }}
+      // initialRouteName='auth/login'
+      >
+
+          {/* <Stack.Screen name="home" /> */}
+          {/* <Stack.Screen name="details" /> */}
+          <Stack.Screen name="auth"  />
     </Stack>
   );
 }

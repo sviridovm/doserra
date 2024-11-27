@@ -5,62 +5,17 @@ import { FlatList, ScrollView } from 'react-native-gesture-handler';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { SQLiteProvider, useSQLiteContext } from 'expo-sqlite';
-import { Asset } from 'expo-asset';
-import * as FileSystem from 'expo-file-system';
 import * as SQLite from 'expo-sqlite';
 import { Medication } from '../../utils/types';
-
-
-// const loadDatabase = async () => {
-//   const dbName = 'medications.db';
-//   const dbAsset = require('doserra/assets/medications.db');
-//   const dbURI = Asset.fromModule(dbAsset).uri;
-//   const dbFilePath = `${FileSystem.documentDirectory}SQLite/${dbName}`;
-
-//   const fileInfo = await FileSystem.getInfoAsync(dbFilePath);
-//   if(!fileInfo.exists) {
-//     await FileSystem.makeDirectoryAsync(`${FileSystem.documentDirectory}SQLite`, { intermediates: true });
-//     await FileSystem.downloadAsync(dbURI, dbFilePath);
-//   } 
-
-// }
-
-
-
-const initializeDatabase = async(db: SQLite.SQLiteDatabase) => {
-  try {
-      await db.execAsync(`
-          
-          CREATE TABLE IF NOT EXISTS medications (
-              id INTEGER PRIMARY KEY AUTOINCREMENT,
-              name TEXT NOT NULL,
-              dosage INTEGER NOT NULL,
-              start_date TEXT NOT NULL,
-              end_date TEXT NOT NULL
-          );
-      `);
-
-
-      await db.execAsync(`
-          CREATE TABLE IF NOT EXISTS users (
-              id INTEGER PRIMARY KEY AUTOINCREMENT,
-              username TEXT NOT NULL UNIQUE,
-              password TEXT NOT NULL
-          );
-      `);
-      console.log('Database initialized !');
-  } catch (error) {
-      console.log('Error while initializing the database : ', error);
-  }
-};
-
+import { initDatabase } from '@/hooks/initDatabase';
+import { StatusBar } from 'expo-status-bar';
+import styles from '@/styles/commons';
+import { TouchableOpacity } from 'react-native';
 
 
 
 
 export default function HomeScreen() {
-  // const db = SQLite.importDatabaseFromAssetAsync(require('doserra/assets/medications.db'));
-  const db = SQLite.openDatabaseSync('medications.db');
 
   
   const [medications, setMedications] = useState<string[]>(['Aspirin', 'coochie', 'buns']);
@@ -72,86 +27,43 @@ export default function HomeScreen() {
   const [dosage, setDosage] = useState<string>('');
   const [test, setTest] = useState('');
 
-  useEffect(() => {
-    db.execSync('CREATE TABLE IF NOT EXISTS medications (id INTEGER PRIMARY KEY NOT NULL, name TEXT NOT NULL, dosage TEXT NOT NULL, startDate TEXT NOT NULL, endDate TEXT NOT NULL)');
-    // clear table
-    // db.execSync('DELETE FROM medications');
-    // db.execSync('INSERT INTO medications (name, dosage, startDate, endDate) VALUES ("Aspirin"');
-    
-    
-  }, []);
   
-  const handleAddMedication = () => {
+  const handleAddMedication = (db: SQLite.SQLiteDatabase) => {
+
     setMedications((prevMedications) => [...prevMedications, newMedication]);
     setNewMedication('');
     setModalVisible(false);
-    
-    db.runSync('INSERT INTO medications (name, dosage, startDate, endDate) VALUES (?, 100, 10-10-10, 11-11-11)', newMedication);      
-    const result = db.runSync('DUMP medications');
-    console.warn(result);
+
+    db.runSync('INSERT INTO medications (name, dosage, start_date, end_date, username) VALUES (?, ?, ?, ?, ?)', 
+      [newMedication, dosage, String(startDate), String(endDate), '1']);
+  
+
   };
+
+
   
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-    <ScrollView>
-    <SQLiteProvider databaseName='medications.db'onInit={initializeDatabase}>
-    <SafeAreaView style={styles.container}>
-        <Stack.Screen
-        options={{
-          headerTitle: 'Home',
-          headerRight: () => 
-            <Button
-              title="Add New Medication"
-              onPress={() => setModalVisible(true)}/>
-        }}
-        >
-      
-        </Stack.Screen>
+    <GestureHandlerRootView>
+    <ScrollView contentContainerStyle={floatingButtonStyle.container}>
+    <SQLiteProvider databaseName='medications.db' onInit={initDatabase}>
+    <SafeAreaView style={{flex: 1}}>
         <Text style={styles.title}>Medications</Text> 
       <Content medications={medications} setMedications={setMedications}/>
 
-      <Modal
-        visible={modalVisible}
-        animationType='slide'
-        transparent={false}
-        onRequestClose={() => setModalVisible(false)}
-      >
-        <SafeAreaView style={styles.modalContainer}>
-          <SafeAreaView>
-            <TextInput
-              placeholder='Medication Name'
-              onChangeText={(text) => setNewMedication(text)}
-              value={newMedication}
-              style={styles.input}
-              autoFocus={true}
-            />
+      <AddMedicationModal 
+        modalVisible={modalVisible}
+        setModalVisible={setModalVisible}
+        newMedication={newMedication}
+        setNewMedication={setNewMedication}
+        dosage={dosage}
+        setDosage={setDosage}
+        handleAddMedication={handleAddMedication}
 
-            <TextInput
-              placeholder='Dosage'
-              keyboardType='numeric'
-              onChangeText={(text) => setDosage(text)}
-              style={styles.input}
-            />
+      />
 
-
-
-            <Button
-              title='Add'
-              onPress={handleAddMedication}
-              disabled={!newMedication}
-            />
-            <Button
-              title='Cancel'
-              onPress={() => {
-                setNewMedication('');
-                setModalVisible(false);
-              }}
-            />
-          </SafeAreaView>
-        </SafeAreaView>
-
-
-      </Modal>
+      <View style={floatingButtonStyle.floatingButtonContainer}>
+      <AddMedicationButton setModalVisible={setModalVisible} />
+      </View>
 
 
       {/* </SQLiteProvider> */}
@@ -162,6 +74,78 @@ export default function HomeScreen() {
   );
 }
 
+
+type addMedicationModalProps = {
+  modalVisible: boolean;
+  setModalVisible: (visible: boolean) => void;
+  newMedication: string;
+  setNewMedication: (medication: string) => void;
+  dosage: string;
+  setDosage: (dosage: string) => void;
+  handleAddMedication: (db: SQLite.SQLiteDatabase) => void;
+}
+
+const AddMedicationModal = (props: addMedicationModalProps ) => {
+  const db = useSQLiteContext();
+  
+  // useEffect(() => {
+  // db.runSync("DROP TABLE medications")
+  // }, []);
+
+  return (
+    <Modal
+        visible={props.modalVisible}
+        animationType='slide'
+        transparent={false}
+        onRequestClose={() => props.setModalVisible(false)}
+      >
+        <SafeAreaView style={styles.modalContainer}>
+          <SafeAreaView>
+            <TextInput
+              placeholder='Medication Name'
+              onChangeText={(text) => props.setNewMedication(text)}
+              value={props.newMedication}
+              style={styles.input}
+              autoFocus={true}
+            />
+
+            <TextInput
+              placeholder='Dosage'
+              keyboardType='numeric'
+              onChangeText={(text) => props.setDosage(text)}
+              style={styles.input}
+            />
+
+            <TextInput
+              placeholder='End Date'
+              // keyboardType='text'
+              onChangeText={(text) => props.setDosage(text)}
+              style={styles.input}
+            />
+
+            <Button
+              title='Add'
+              onPress={() => props.handleAddMedication(db)}
+              disabled={!props.newMedication}
+            />
+            
+            <Button
+              title='Cancel'
+              onPress={() => {
+                props.setNewMedication('');
+                props.setModalVisible(false);
+              }}
+            />
+            
+          </SafeAreaView>
+        </SafeAreaView>
+
+
+      </Modal>
+
+  )
+
+}
 
 
 type ContentProps = {
@@ -200,70 +184,44 @@ export function Content( props: ContentProps) {
 
 }
 
-const styles = StyleSheet.create({
+type addMedicationButtonProps = {
+  setModalVisible: (visible: boolean) => void;
+}
+
+const AddMedicationButton = (
+  props: addMedicationButtonProps
+) => {
+  return (
+    <TouchableOpacity
+      style={floatingButtonStyle.floatingButton}
+      onPress={() => props.setModalVisible(true)}>
+        <Text style={floatingButtonStyle.floatingButtonIcon}>+</Text>
+    </TouchableOpacity>
+  )
+}
+
+const floatingButtonStyle = StyleSheet.create({
+  floatingButtonContainer: {
+    alignItems: 'flex-end',
+    marginBottom: 20,
+  },
   container: {
-    // flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  contentContainer: {
-    padding: 10,
-    width: '100%',
-  },
-
-  medicationText: {
-    fontSize: 17,
-    textAlign: 'center',
-
-  },
-
-  medication: {
-    padding: 10,
-    marginVertical: 5,
-    backgroundColor: '#f9f9f9',
-    borderColor: '#ddd',
-    borderWidth: 1,
-    borderRadius: 5,
-    width: '65%',
-    alignSelf: 'center',
-  },
-
-  header: {
-    flexDirection: 'row', // Align items in a row
-    justifyContent: 'space-between', // Space items across the header
-    alignItems: 'center', // Center items vertically
-    padding: 10,
-    backgroundColor: '#f9f9f9', // Optional: background color for header
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-  },
-  modalContainer: {
     flex: 1,
+    justifyContent: 'space-between',
+    paddingBottom: 20,
+  },
+  floatingButton: {
+    // marginBottom: 1,
+    // marginRight: 20,
+    height: 50,
+    width: 50,
+    borderRadius: 25,
+    backgroundColor: 'blue',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.8)',
   },
-   input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
-    padding: 10,
-    marginBottom: 15,
-    width: 100,
-    color: 'white'
+  floatingButtonIcon: {
+    color: 'white',
+    fontSize: 30,
   },
-  button: {
-    backgroundColor: '#007BFF', // Blue button
-    paddingVertical: 12,
-    paddingHorizontal: 25,
-    borderRadius: 30, // Rounded corners
-    shadowColor: '#000', // Shadow for depth
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 5,
-    elevation: 5, // Shadow for Android
-  },
-
 });
