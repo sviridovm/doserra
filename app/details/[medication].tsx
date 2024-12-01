@@ -4,19 +4,24 @@ import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { useLocalSearchParams, router } from 'expo-router';
 import { SQLiteProvider, useSQLiteContext } from 'expo-sqlite';
 import { useEffect, useState } from 'react';
-import { Medication } from '../../utils/types';
+import { Medication, defaultMedication } from '../../utils/types';
 import styles from '@/styles/commons';
 
 export default function DetailsScreen() {
-  const medication = useLocalSearchParams();
-  console.log(medication);
+  const medicationJSON = useLocalSearchParams().medication?.toString();
+  console.log('----------------------------')
+  console.log(medicationJSON);
+  const medication = JSON.parse(medicationJSON) as Medication;
+  // console.log(medication);
+  // const medication = medicationJSON;
   
   return (
     <GestureHandlerRootView>
       <ScrollView>
         <SQLiteProvider databaseName='medications.db'>
           <SafeAreaView style={styles.container}>
-            <MedicationDetails />
+            {/* <MedicationDetails medication={medication}/> */}
+            <MedicationDetails {...medication}/>
           </SafeAreaView>
         </SQLiteProvider>
       </ScrollView>
@@ -24,11 +29,7 @@ export default function DetailsScreen() {
   );
 }
 
-const MedicationDetails = () => {
-  const db = useSQLiteContext();
-  const medicationJSON = String(useLocalSearchParams());
-  const medication = JSON.parse(medicationJSON) as Medication;
-  console.log(medication);
+const MedicationDetails = (medication: Medication) => {
 
 
   // !PLACEHOLDER
@@ -55,7 +56,7 @@ const MedicationDetails = () => {
     <View>
       <Text>Medication: {medication.name}</Text>
       <Text>Dosage: {medication.dosage}</Text>
-      <Text>Start Date: {medication.startDate.toString()}</Text>
+      <Text>Start Date: {medication.startDate}</Text>
 
       <Pressable style={styles.button} onPress={() => router.replace('/home')}>
                 <Text style={styles.buttonText} >Back</Text>

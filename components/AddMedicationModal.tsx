@@ -10,12 +10,8 @@ import { useState } from "react";
 type props = {
   modalVisible: boolean;
   setModalVisible: (visible: boolean) => void;
-  // newMedication: Medication;
-  // setNewMedication: (medication: Medication) => void;
-  // setMedications: (medications: Medication[]) => void;
   setMedications: React.Dispatch<React.SetStateAction<Medication[]>>;
 
-  // dosage: string;
     // setDosage: (dosage: string) => void;
     // handleAddMedication: (db: SQLiteDatabase) => void;
   }
@@ -35,12 +31,15 @@ export default function AddMedicationModal({
     // setMedications((prevMedications: Medication[]) => [...prevMedications, newMedication]);
     setMedications((prevMedications: Medication[]) => [...prevMedications, newMedication]);
 
-    setNewMedication(defaultMedication);
-    setModalVisible(false);
-  
+    console.log(newMedication);
+
     db.runSync('INSERT INTO medications (name, dosage, start_date, end_date, username) VALUES (?, ?, ?, ?, ?)', 
-      [newMedication.name, newMedication.dosage, newMedication.startDate, newMedication.endDate, newMedication.username]);
-  
+      [newMedication.name, newMedication.dosage, newMedication.startDate, newMedication.endDate, '1']);
+      
+
+
+    setModalVisible(false);
+    setNewMedication(defaultMedication);
   
   };
   return (
@@ -69,7 +68,6 @@ export default function AddMedicationModal({
   
               <TextInput
                 placeholder='End Date'
-                // keyboardType='text'
                 // onChangeText={(text) => props.setDosage(text)}
                 style={styles.input}
               />
@@ -77,13 +75,13 @@ export default function AddMedicationModal({
               <Button
                 title='Add'
                 onPress={() => handleAddMedication(db)}
-                disabled={!(newMedication===defaultMedication)}
+                disabled={(newMedication===defaultMedication)}
               />
               
               <Button
                 title='Cancel'
                 onPress={() => {
-                  setNewMedication(defaultMedication);
+                  // setNewMedication(defaultMedication);
                   setModalVisible(false);
                 }}
               />

@@ -54,13 +54,20 @@ const styles = StyleSheet.create({
     backgroundColor: '#f9f9f9', // Optional: background color for header
   },
   
-  medicationContainer: {
+  
+  
+  
+});
+
+
+const MedicationListStyles = StyleSheet.create({
+  container: {
     flex: 1,
     alignItems: 'center',
     paddingHorizontal: 20,
   },
   
-  medicationButton: {
+  button: {
     backgroundColor: '#f9f9f9',
     borderColor: '#ddd',
     borderWidth: 1,
@@ -71,18 +78,11 @@ const styles = StyleSheet.create({
     width: '100%',     // Full width within container
     alignSelf: 'center', // Center horizontally
   },
-  medicationListContainer: {
+  listContainer: {
     width: '100%', // Make sure it takes full width of the container
     paddingBottom: 20, // Add some space at the bottom for scrolling
   },
   
-  
-  
-});
-
-
-const MedicationListStyles = StyleSheet.create({
-
 });
 
 const ModalStyles = StyleSheet.create({

@@ -26,23 +26,11 @@ export default function HomeScreen() {
   const [pickerMode, setPickerMode] = useState('date');
 
   
-  // const handleAddMedication = (db: SQLite.SQLiteDatabase) => {
-
-  //   setMedications((prevMedications) => [...prevMedications, newMedication]);
-  //   setNewMedication(defaultMedication);
-  //   setModalVisible(false);
-
-  //   db.runSync('INSERT INTO medications (name, dosage, start_date, end_date, username) VALUES (?, ?, ?, ?, ?)', 
-  //     [newMedication.name, newMedication.dosage, newMedication.startDate, newMedication.endDate, newMedication.username]);
-  
-
-  // };
-  
   return (
     <GestureHandlerRootView>
     <ScrollView contentContainerStyle={styles.container}>
     <SQLiteProvider databaseName='medications.db' onInit={initDatabase}>
-    <SafeAreaView style={styles.medicationContainer}>
+    <SafeAreaView style={styles.container}>
         <Text style={styles.title}>Medications</Text> 
         <MedicationList medications={medications} setMedications={setMedications} username='1'/>
 

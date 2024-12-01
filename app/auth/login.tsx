@@ -11,9 +11,7 @@ export default function HomeScreen() {
 
     return (
         <SQLiteProvider databaseName="medications.db" onInit={initDatabase}>
-        <SafeAreaView style={styles.container}>
             <LoginScreen />
-        </SafeAreaView>
         </SQLiteProvider>
         )
 }
@@ -52,7 +50,7 @@ const LoginScreen = () => {
     }
 
     return (
-        <View>
+        <SafeAreaView style={styles.container}>
             <Text style={styles.title}>Login</Text>
             <TextInput 
                 style={styles.input}
@@ -72,7 +70,8 @@ const LoginScreen = () => {
             <Pressable style={styles.link} onPress={() => router.replace('/auth/register')}>
                 <Text style={styles.linkText}>Don't have an account? Register</Text>
             </Pressable>
-        </View>
+        </SafeAreaView>
+        
     )
 }
 

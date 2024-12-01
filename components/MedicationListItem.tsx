@@ -12,7 +12,7 @@ export default function MedicationListItem({medication}: props) {
         
     
     return (
-        <Pressable style={medicationListStyles.medicationButton} onPress=
+        <Pressable style={medicationListStyles.button} onPress=
         {() => {
             router.replace({
                 pathname: '/details/[medication]',

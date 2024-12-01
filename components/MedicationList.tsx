@@ -23,7 +23,7 @@ export default function MedicationList( props: props) {
     }, []);
   
       return (
-        <View style={medicationListStyles.medicationListContainer}>
+        <View style={medicationListStyles.container}>
           {props.medications.map((medication, index) => (
               <MedicationListItem key={index} medication={medication}/>       
           ))} 
