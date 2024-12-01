@@ -7,8 +7,6 @@ import { useEffect, useState } from 'react';
 import { Medication } from '../../utils/types';
 import styles from '@/styles/commons';
 
-
-
 export default function DetailsScreen() {
   const medication = useLocalSearchParams();
   console.log(medication);
@@ -90,5 +88,4 @@ type QueryResult = {
 export function CountdownTimer() {
   const medication = String(useLocalSearchParams());
 }
-
 

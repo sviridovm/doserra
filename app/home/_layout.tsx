@@ -4,11 +4,23 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 
 export default function RootLayout() {
     return (
-      <Tabs>
+      <Tabs
+      screenOptions={{
+        tabBarActiveTintColor: '#ffd33d',
+        headerStyle: {
+          backgroundColor: '#25292e',
+        },
+        headerShadowVisible: false,
+        headerTintColor: '#fff',
+        tabBarStyle: {
+        backgroundColor: '#25292e',
+        },
+      }}
+      >
         <Tabs.Screen name="index" 
             options={{
-              tabBarIcon: ({ color, size }) => (
-                <Ionicons name="home" color={color} size={size} />
+              tabBarIcon: ({ color, focused }) => (
+                <Ionicons name={focused ? 'home-sharp' : 'home-outline'} color={color} size={24} />
               )
             }}
         />
