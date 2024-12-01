@@ -1,8 +1,10 @@
 
 
 export interface Medication {
+  id: number;
   name: string;
-  dosage: string;
-  startDate: Date;
-  endDate: Date;
+  dosage: number;
+  startDate: string;
+  endDate: string;
+  username: string;
 }

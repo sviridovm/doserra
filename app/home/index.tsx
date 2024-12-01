@@ -11,6 +11,7 @@ import { initDatabase } from '@/hooks/initDatabase';
 import { StatusBar } from 'expo-status-bar';
 import styles from '@/styles/commons';
 import { TouchableOpacity } from 'react-native';
+import { router } from 'expo-router';
 
 
 
@@ -18,7 +19,7 @@ import { TouchableOpacity } from 'react-native';
 export default function HomeScreen() {
 
   
-  const [medications, setMedications] = useState<string[]>(['Aspirin', 'coochie', 'buns']);
+  const [medications, setMedications] = useState<string[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [newMedication, setNewMedication] = useState('');
   const [startDate, setStartDate] = useState(new Date());
@@ -166,17 +167,17 @@ export function Content( props: ContentProps) {
 
   return (
     <View style={styles.contentContainer}>
-      {props.medications.map((medication, index) => (
+      {props.medications.map((medication_name, index) => (
         <View key={index} style={styles.medication}>
-          <Link
-            href={{ 
-              pathname: '/details/[medication]',
-              params: { medication: medication } 
-            }}
-            style={styles.medicationText}
-            >
-            {medication}
-          </Link>
+          <Button
+        title={medication_name}
+        onPress={() => {
+          router.push({
+            pathname: '/details/[medication]',
+            params: { medication: medication_name },
+          });
+        }}
+      />
         </View>
       ))} 
     </View>

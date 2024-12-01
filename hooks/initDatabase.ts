@@ -2,6 +2,8 @@ import SQLite from 'expo-sqlite';
 
 
 export const initDatabase = async(db: SQLite.SQLiteDatabase) => {
+    // delete the tables if they already exist
+    //await db.execAsync(`DROP TABLE IF EXISTS medications;`);
     try {
         await db.execAsync(`
             

@@ -1,15 +1,18 @@
 import { GestureHandlerRootView, ScrollView } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { View, Text, StyleSheet } from 'react-native';
-import { useLocalSearchParams } from 'expo-router';
+import { View, Text, StyleSheet, Pressable } from 'react-native';
+import { useLocalSearchParams, router } from 'expo-router';
 import { SQLiteProvider, useSQLiteContext } from 'expo-sqlite';
 import { useEffect, useState } from 'react';
 import { Medication } from '../../utils/types';
+import styles from '@/styles/commons';
+
 
 
 export default function DetailsScreen() {
-    const { medication } = useLocalSearchParams();
-    
+  const medication = useLocalSearchParams();
+  console.log(medication);
+  
   return (
     <GestureHandlerRootView>
       <ScrollView>
@@ -25,7 +28,10 @@ export default function DetailsScreen() {
 
 const MedicationDetails = () => {
   const db = useSQLiteContext();
-  const medication = String(useLocalSearchParams());
+  const medication = String(useLocalSearchParams()[0]);
+  console.log(medication);
+
+
   // !PLACEHOLDER
   const username = '1';
   const [endDate, setEndDate] = useState(new Date());
@@ -40,20 +46,19 @@ const MedicationDetails = () => {
     });
 
   useEffect( () => {
-    function fetchMedicationData() {
-      console.log('here');
-      const result = db.getFirstSync<QueryResult>('SELECT * FROM medications WHERE name = ? AND username = ?', [medication, '1']);  
+    async function fetchMedicationData() {
+      const query = 'SELECT * FROM medications WHERE name = ? AND username = ?';
+      const all = db.getAllSync(query, [medication, username]) as QueryResult[];
+      console.log(all);
+      const result = all[0];  
 
       if (result) {
         setEndDate(new Date(result.end_date));
         setDosage(result.dosage);
         setStartDate(new Date(result.start_date));
       } 
-      console.error("penus");
-      console.error(result);
       
     }
-      
     fetchMedicationData();
   }, []);
 
@@ -62,16 +67,23 @@ const MedicationDetails = () => {
       <Text>Medication: {medication}</Text>
       <Text>Dosage: {dosage}</Text>
       <Text>Start Date: {startDate.toDateString()}</Text>
+
+      <Pressable style={styles.button} onPress={() => router.replace('/home')}>
+                <Text style={styles.buttonText} >Back</Text>
+      </Pressable>
+
+      
     </View>
   )
 
 }
 
 type QueryResult = {
-  end_date: string;
+  id: number;
+  name: string;
   dosage: number;
   start_date: string;
-  medication: string;
+  end_date: string;
   username: string;
 }
 
@@ -80,10 +92,3 @@ export function CountdownTimer() {
 }
 
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-});
