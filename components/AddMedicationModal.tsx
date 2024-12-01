@@ -1,5 +1,4 @@
-import styles from "@/styles/commons";
-import ModalStyles from "@/styles/commons";
+import { modalStyles, styles } from "@/styles/commons";
 import { Button, Modal, SafeAreaView, TextInput } from "react-native";
 import { useSQLiteContext, SQLiteDatabase } from "expo-sqlite";
 import { Medication } from "@/utils/types";
@@ -49,7 +48,7 @@ export default function AddMedicationModal({
           transparent={false}
           onRequestClose={() => setModalVisible(false)}
         >
-          <SafeAreaView style={ModalStyles.container}>
+          <SafeAreaView style={modalStyles.container}>
             <SafeAreaView>
               <TextInput
                 placeholder='Medication Name'

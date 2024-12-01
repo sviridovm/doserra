@@ -9,8 +9,7 @@ import * as SQLite from 'expo-sqlite';
 import { Medication } from '../../utils/types';
 import { initDatabase } from '@/hooks/initDatabase';
 import MedicationList from '@/components/MedicationList';
-import styles from '@/styles/commons';
-import ModalStyles from '@/styles/commons';
+import { medicationListStyles, modalStyles, styles } from "@/styles/commons";
 import AddMedicationModal from '@/components/AddMedicationModal';
 import FloatingButton from '@/components/FloatingButton';
 import { defaultMedication } from '@/utils/types';
@@ -28,9 +27,9 @@ export default function HomeScreen() {
   
   return (
     <GestureHandlerRootView>
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView>
     <SQLiteProvider databaseName='medications.db' onInit={initDatabase}>
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={medicationListStyles.container}>
         <Text style={styles.title}>Medications</Text> 
         <MedicationList medications={medications} setMedications={setMedications} username='1'/>
 

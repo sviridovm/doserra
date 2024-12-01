@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 
-const styles = StyleSheet.create({
+export const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: 'bold',
@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
 });
 
 
-const MedicationListStyles = StyleSheet.create({
+export const medicationListStyles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
@@ -85,7 +85,7 @@ const MedicationListStyles = StyleSheet.create({
   
 });
 
-const ModalStyles = StyleSheet.create({
+export const modalStyles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
@@ -94,4 +94,4 @@ const ModalStyles = StyleSheet.create({
   },
 });
 
-export default styles; MedicationListStyles; ModalStyles;
+// export default { styles, MedicationListStyles, ModalStyles };

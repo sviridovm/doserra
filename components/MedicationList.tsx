@@ -3,7 +3,7 @@ import { useSQLiteContext } from "expo-sqlite";
 import { useEffect } from "react";
 import { View, Pressable } from "react-native";
 import MedicationListItem from '@/components/MedicationListItem';
-import medicationListStyles from '@/styles/commons';
+import { medicationListStyles } from '@/styles/commons';
 
 type props = {
     medications: Medication[];

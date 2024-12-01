@@ -1,5 +1,5 @@
-import { Pressable, View } from "react-native";
-import medicationListStyles from "@/styles/commons";
+import { Pressable, View, Text } from "react-native";
+import { medicationListStyles, styles } from "@/styles/commons";
 import {router} from "expo-router";
 import { Medication } from "@/utils/types";
 
@@ -12,6 +12,7 @@ export default function MedicationListItem({medication}: props) {
         
     
     return (
+        <View style={medicationListStyles.listContainer}>
         <Pressable style={medicationListStyles.button} onPress=
         {() => {
             router.replace({
@@ -19,7 +20,13 @@ export default function MedicationListItem({medication}: props) {
                 params: { medication: JSON.stringify(medication) },
             });
         }
+        
         }>
-        </Pressable> 
+            <Text style={styles.medicationText}>
+                {medication.name}
+            </Text>
+
+        </Pressable>
+        </View> 
       );
 }

@@ -5,7 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { initDatabase } from '@/hooks/initDatabase';
 import { Stack, router } from "expo-router";
-import styles from "@/styles/commons";
+import { styles } from "@/styles/commons";
 
 export default function HomeScreen() {
 

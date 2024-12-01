@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Alert, Pressable, TextInput, View, Text } from "react-native";
 import { router } from "expo-router";
 import { StyleSheet } from "react-native";
-import styles from "@/styles/commons";
+import { styles } from "@/styles/commons";
 import { initDatabase } from "@/hooks/initDatabase";
 
 

@@ -5,7 +5,7 @@ import { useLocalSearchParams, router } from 'expo-router';
 import { SQLiteProvider, useSQLiteContext } from 'expo-sqlite';
 import { useEffect, useState } from 'react';
 import { Medication, defaultMedication } from '../../utils/types';
-import styles from '@/styles/commons';
+import { styles } from '@/styles/commons';
 
 export default function DetailsScreen() {
   const medicationJSON = useLocalSearchParams().medication?.toString();
@@ -66,15 +66,6 @@ const MedicationDetails = (medication: Medication) => {
     </View>
   )
 
-}
-
-type QueryResult = {
-  id: number;
-  name: string;
-  dosage: number;
-  start_date: string;
-  end_date: string;
-  username: string;
 }
 
 export function CountdownTimer() {
