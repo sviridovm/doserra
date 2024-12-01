@@ -1,21 +1,22 @@
 import { Pressable, View } from "react-native";
 import medicationListStyles from "@/styles/commons";
-import { Link } from "expo-router";
 import {router} from "expo-router";
-
+import { Medication } from "@/utils/types";
 
 type props = {
-    medication: string;
+    medication: Medication;
     // index: number;
 } 
 
 export default function MedicationListItem({medication}: props) {
+        
+    
     return (
         <Pressable style={medicationListStyles.medicationButton} onPress=
         {() => {
             router.replace({
                 pathname: '/details/[medication]',
-                params: { medication: medication },
+                params: { medication: JSON.stringify(medication) },
             });
         }
         }>

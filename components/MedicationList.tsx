@@ -6,16 +6,17 @@ import MedicationListItem from '@/components/MedicationListItem';
 import medicationListStyles from '@/styles/commons';
 
 type props = {
-    medications: string[];
-    setMedications: (medications: string[]) => void;
+    medications: Medication[];
+    setMedications: (medications: Medication[]) => void;
+    username: string;
 }
 
 export default function MedicationList( props: props) {
     const db = useSQLiteContext();
     useEffect(() => {
       async function fetchMedications() {
-        const result = await db.getAllAsync<Medication>('SELECT * FROM medications');
-        props.setMedications(result.map((medication) => medication.name));
+        const result = await db.getAllAsync<Medication>('SELECT * FROM medications where username = ?', [props.username]);
+        props.setMedications(result);
       }
   
       fetchMedications();

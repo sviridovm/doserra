@@ -13,31 +13,30 @@ import styles from '@/styles/commons';
 import ModalStyles from '@/styles/commons';
 import AddMedicationModal from '@/components/AddMedicationModal';
 import FloatingButton from '@/components/FloatingButton';
+import { defaultMedication } from '@/utils/types';
+
+// const defaultMedication: Medication = {name: '', dosage: 0, startDate: String(new Date()), endDate: String(new Date()), username: '', id: -1}
 
 export default function HomeScreen() {
 
   
-  const [medications, setMedications] = useState<string[]>([]);
+  const [medications, setMedications] = useState<Medication[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
-  const [newMedication, setNewMedication] = useState('');
-  const [startDate, setStartDate] = useState(new Date());
-  const [endDate, setEndDate] = useState(new Date());
+  const [newMedication, setNewMedication] = useState<Medication>(defaultMedication);
   const [pickerMode, setPickerMode] = useState('date');
-  const [dosage, setDosage] = useState<string>('');
-  const [test, setTest] = useState('');
 
   
-  const handleAddMedication = (db: SQLite.SQLiteDatabase) => {
+  // const handleAddMedication = (db: SQLite.SQLiteDatabase) => {
 
-    setMedications((prevMedications) => [...prevMedications, newMedication]);
-    setNewMedication('');
-    setModalVisible(false);
+  //   setMedications((prevMedications) => [...prevMedications, newMedication]);
+  //   setNewMedication(defaultMedication);
+  //   setModalVisible(false);
 
-    db.runSync('INSERT INTO medications (name, dosage, start_date, end_date, username) VALUES (?, ?, ?, ?, ?)', 
-      [newMedication, dosage, String(startDate), String(endDate), '1']);
+  //   db.runSync('INSERT INTO medications (name, dosage, start_date, end_date, username) VALUES (?, ?, ?, ?, ?)', 
+  //     [newMedication.name, newMedication.dosage, newMedication.startDate, newMedication.endDate, newMedication.username]);
   
 
-  };
+  // };
   
   return (
     <GestureHandlerRootView>
@@ -45,16 +44,12 @@ export default function HomeScreen() {
     <SQLiteProvider databaseName='medications.db' onInit={initDatabase}>
     <SafeAreaView style={styles.medicationContainer}>
         <Text style={styles.title}>Medications</Text> 
-        <MedicationList medications={medications} setMedications={setMedications}/>
+        <MedicationList medications={medications} setMedications={setMedications} username='1'/>
 
         <AddMedicationModal 
           modalVisible={modalVisible}
           setModalVisible={setModalVisible}
-          newMedication={newMedication}
-          setNewMedication={setNewMedication}
-          dosage={dosage}
-          setDosage={setDosage}
-          handleAddMedication={handleAddMedication}
+          setMedications={setMedications}
         />
 
         <FloatingButton onPress={setModalVisible} />
