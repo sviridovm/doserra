@@ -5,7 +5,7 @@ import { useLocalSearchParams } from 'expo-router';
 import { SQLiteProvider, useSQLiteContext } from 'expo-sqlite';
 import { useEffect, useState } from 'react';
 import { Medication } from '../../utils/types';
-
+import styles from '@/styles/commons';
 
 export default function DetailsScreen() {
     const { medication } = useLocalSearchParams();
@@ -79,11 +79,3 @@ export function CountdownTimer() {
   const medication = String(useLocalSearchParams());
 }
 
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-});

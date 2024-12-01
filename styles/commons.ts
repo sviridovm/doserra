@@ -36,30 +36,14 @@ const styles = StyleSheet.create({
     marginBottom: 30,
   },
   container: {
-    // flex: 1,
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  contentContainer: {
-    padding: 10,
-    width: '100%',
-  },
-
   medicationText: {
     fontSize: 17,
     textAlign: 'center',
 
-  },
-
-  medication: {
-    padding: 10,
-    marginVertical: 5,
-    backgroundColor: '#f9f9f9',
-    borderColor: '#ddd',
-    borderWidth: 1,
-    borderRadius: 5,
-    width: '65%',
-    alignSelf: 'center',
   },
 
   header: {
@@ -69,13 +53,45 @@ const styles = StyleSheet.create({
     padding: 10,
     backgroundColor: '#f9f9f9', // Optional: background color for header
   },
-  modalContainer: {
+  
+  medicationContainer: {
+    flex: 1,
+    alignItems: 'center',
+    paddingHorizontal: 20,
+  },
+  
+  medicationButton: {
+    backgroundColor: '#f9f9f9',
+    borderColor: '#ddd',
+    borderWidth: 1,
+    borderRadius: 10,
+    paddingVertical: 15,
+    paddingHorizontal: 20,
+    marginVertical: 8, // Adds spacing between buttons
+    width: '100%',     // Full width within container
+    alignSelf: 'center', // Center horizontally
+  },
+  medicationListContainer: {
+    width: '100%', // Make sure it takes full width of the container
+    paddingBottom: 20, // Add some space at the bottom for scrolling
+  },
+  
+  
+  
+});
+
+
+const MedicationListStyles = StyleSheet.create({
+
+});
+
+const ModalStyles = StyleSheet.create({
+  container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(0, 0, 0, 0.8)',
   },
-
 });
 
-export default styles;
+export default styles; MedicationListStyles; ModalStyles;

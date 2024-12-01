@@ -11,7 +11,9 @@ export default function HomeScreen() {
 
     return (
         <SQLiteProvider databaseName="medications.db" onInit={initDatabase}>
+        <SafeAreaView style={styles.container}>
             <LoginScreen />
+        </SafeAreaView>
         </SQLiteProvider>
         )
 }
@@ -50,7 +52,7 @@ const LoginScreen = () => {
     }
 
     return (
-        <View style={styles.container}>
+        <View>
             <Text style={styles.title}>Login</Text>
             <TextInput 
                 style={styles.input}
