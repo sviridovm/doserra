@@ -94,4 +94,25 @@ export const modalStyles = StyleSheet.create({
   },
 });
 
-// export default { styles, MedicationListStyles, ModalStyles };
+export const cameraStyles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  camera: {
+    flex: 1,
+  },
+  buttonContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    backgroundColor: 'transparent',
+    margin: 32,
+  },
+  button: {
+    flex: 1,
+    // alignSelf: 'center',
+    alignItems: 'center',
+  },
+
+
+});
