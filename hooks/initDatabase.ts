@@ -28,6 +28,7 @@ export const initDatabase = async(db: SQLite.SQLiteDatabase) => {
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 name TEXT NOT NULL,
                 dosage INTEGER NOT NULL,
+                interval INTEGER NOT NULL,
                 start_date TEXT NOT NULL,
                 end_date TEXT NOT NULL,
                 username TEXT NOT NULL,

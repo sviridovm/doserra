@@ -1,5 +1,5 @@
 import { modalStyles, styles } from "@/styles/commons";
-import { Button, Modal, SafeAreaView, TextInput, View, Text } from "react-native";
+import { Button, Modal, SafeAreaView, TextInput, View, Text, Alert } from "react-native";
 import { useSQLiteContext, SQLiteDatabase } from "expo-sqlite";
 import { Medication } from "@/utils/types";
 import { defaultMedication } from "@/utils/types";
@@ -46,15 +46,43 @@ export default function AddMedicationModal({
 
   const handleAddMedication = (db: SQLiteDatabase) => {
   
-    // setMedications((prevMedications: Medication[]) => [...prevMedications, newMedication]);
-    setMedications((prevMedications: Medication[]) => [...prevMedications, newMedication]);
-
+    
     console.log(newMedication);
-
-    db.runSync('INSERT INTO medications (name, dosage, start_date, end_date, username) VALUES (?, ?, ?, ?, ?)', 
-      [newMedication.name, newMedication.dosage, newMedication.startDate, newMedication.endDate, '1']);
+    
+    db.runSync('INSERT INTO medications (name, dosage, interval, start_date, end_date, username) VALUES (?, ?, ?, ?, ?, ?)', 
+      [newMedication.name, newMedication.dosage, newMedication.interval, newMedication.startDate, newMedication.endDate, '1']);
       
+      interface MedicationId {
+        id: number;
+      }
+      
+      const res = db.getFirstSync<MedicationId>('SELECT id FROM medications WHERE name = ? AND dosage = ? AND interval = ? AND start_date = ? AND end_date = ? AND username = ?', [newMedication.name, newMedication.dosage, newMedication.interval, newMedication.startDate, newMedication.endDate, '1']);
+      if (!res){
+        Alert.alert('Error adding medication', 'Please try again');
+        setNewMedication(defaultMedication);
+        return;
+      };
+      
+      newMedication.id = res.id;
+      setMedications((prevMedications: Medication[]) => [...prevMedications, newMedication]);
 
+    
+
+    const startDate = new Date(newMedication.startDate);
+    const endDate = new Date(newMedication.endDate);
+    const intervalInMillis = newMedication.interval * 60 * 60 * 1000;
+
+
+    // add intake for every dose between start and end date
+    // const intakeEntries = [];
+    // for (let time = startDate.getTime(); time <= endDate.getTime(); time += intervalInMillis) {
+    //   intakeEntries.push([res.id, new Date(time).toISOString(), false]);
+    // }
+
+    // DO NOT AWAIT
+    for (let i = startDate.getTime(); i <= endDate.getTime(); i += intervalInMillis) {
+      db.runAsync('INSERT INTO medication_intake (medication_id, intake_time, taken) VALUES (?, ?, ?)', [res.id, new Date(i).toISOString(), false]);
+    }
 
     setModalVisible(false);
     setNewMedication(defaultMedication);
@@ -94,7 +122,7 @@ export default function AddMedicationModal({
               <TextInput
                 placeholder="Interval"
                 keyboardType="numeric"
-                // onChangeText={(text) => setNewMedication({...newMedication, interval: parseInt(text)})}
+                onChangeText={(text) => setNewMedication({...newMedication, interval: parseInt(text)})}
                 style={[modalStyles.input, {borderColor: intervalFocused ? '#34ebae' : '#CCC'}]}
                 onFocus={() => setIntervalFocused(true)}
                 onBlur={() => setIntervalFocused(false)}                
@@ -122,6 +150,7 @@ export default function AddMedicationModal({
                 mode="date"
                 onChange={handleEndDateChange}
                 style={modalStyles.datePicker}
+                
               />
               </View>
   

@@ -46,16 +46,10 @@ const MedicationDetails = (medication: Medication) => {
   useEffect(() => {
     const fetchIntakes = async() => {
       try {
-        // TODO: REMOVE
-        // insert intakes
-        for(let i = 0; i < 10; i++) {
-          const date = new Date()
-          date.setHours(new Date().getHours() + (12 * i))
-          await db.runAsync('INSERT INTO medication_intake (medication_id, intake_time, taken) VALUES (?, ?, ?)', [medication.id, date.toISOString(), false]);
-        }
 
         const intakes = await db.getAllAsync<MedicationIntake>('SELECT * FROM medication_intake WHERE medication_id = ?', [medication.id]);
         setIntakes(intakes);
+        console.log(intakes);
       } catch (error) {
         console.log('Error while fetching intakes : ', error);
       }
@@ -74,6 +68,14 @@ const MedicationDetails = (medication: Medication) => {
     return intake.taken ? '#4CAF50' : '#F44336'; // Green if taken, Red if missed
   };
 
+  const getTime = (intake_time: string) => {
+    const date = new Date(intake_time);
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+    return `${hours}:${minutes}`;  
+  }
+
+
   return (
     <View>
       <View>
@@ -89,8 +91,11 @@ const MedicationDetails = (medication: Medication) => {
             key={intake.id}
             style={[styles.gridItem, { backgroundColor: getBackgroundColor(intake) }]}
           >
+
+              
             <Text style={styles.intakeText}>{new Date(intake.intake_time).toLocaleDateString()}</Text>
-            <Text style={styles.intakeText}>{new Date(intake.intake_time).toLocaleTimeString()}</Text>
+            <Text style={styles.intakeText}>{getTime(intake.intake_time)}</Text>
+
           </View>
         ))}
       </View>
@@ -137,7 +142,7 @@ const styles = StyleSheet.create({
   },
   intakeText: {
     color: 'white',
-    fontSize: 12,
+    fontSize: 10,
     textAlign: 'center',
   },
 });

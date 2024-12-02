@@ -21,8 +21,6 @@ export default function HomeScreen() {
   
   const [medications, setMedications] = useState<Medication[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
-  const [newMedication, setNewMedication] = useState<Medication>(defaultMedication);
-  const [pickerMode, setPickerMode] = useState('date');
 
   
   return (
