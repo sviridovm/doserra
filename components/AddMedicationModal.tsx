@@ -1,10 +1,11 @@
 import { modalStyles, styles } from "@/styles/commons";
-import { Button, Modal, SafeAreaView, TextInput, View } from "react-native";
+import { Button, Modal, SafeAreaView, TextInput, View, Text } from "react-native";
 import { useSQLiteContext, SQLiteDatabase } from "expo-sqlite";
 import { Medication } from "@/utils/types";
 import { defaultMedication } from "@/utils/types";
 import { useState } from "react";
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { mod } from "@tensorflow/tfjs";
 
 type props = {
   modalVisible: boolean;
@@ -27,6 +28,10 @@ export default function AddMedicationModal({
 
   const [showStartPicker, setShowStartPicker] = useState(false);
   const [showEndPicker, setShowEndPicker] = useState(false);
+
+  const [medicationFocused, setMedicationFocused] = useState(false);
+  const [dosageFocused, setDosageFocused] = useState(false);
+  const [intervalFocused, setIntervalFocused] = useState(false);
 
   const handleStartDateChange = (_: any, selectedDate?: Date) => {
     setShowStartPicker(false);
@@ -63,37 +68,67 @@ export default function AddMedicationModal({
           onRequestClose={() => setModalVisible(false)}
         >
           <SafeAreaView style={modalStyles.container}>
-            <View>
+            <View style={modalStyles.inputContainer}>
 
               <TextInput
                 placeholder='Medication Name'
                 onChangeText={(text) => setNewMedication({...newMedication, name: text})}
                 // value={newMedication.name}
-                style={styles.input}
-                autoFocus={true}
+                autoFocus={false}
+                style={[modalStyles.input, {borderColor: medicationFocused ? '#34ebae' : '#CCC'}]}
+                onFocus={() => setMedicationFocused(true)}
+                onBlur={() => setMedicationFocused(false)}
+
               />
   
               <TextInput
                 placeholder='Dosage'
                 keyboardType='numeric'
                 onChangeText={(text) => setNewMedication({...newMedication, dosage: parseInt(text)})}
-                style={styles.input}
-              />
-  
-            <DateTimePicker
-              value={new Date(newMedication.endDate)}
-              mode="date"
-              onChange={handleEndDateChange}
-            />
+                style={[modalStyles.input, {borderColor: dosageFocused ? '#34ebae' : '#CCC'}]}
+                onFocus={() => setDosageFocused(true)}
+                onBlur={() => setDosageFocused(false)}
 
-            <DateTimePicker
-              value={new Date(newMedication.startDate)}
-              mode="date"
-              onChange={handleStartDateChange}
               />
   
+              <TextInput
+                placeholder="Interval"
+                keyboardType="numeric"
+                // onChangeText={(text) => setNewMedication({...newMedication, interval: parseInt(text)})}
+                style={[modalStyles.input, {borderColor: intervalFocused ? '#34ebae' : '#CCC'}]}
+                onFocus={() => setIntervalFocused(true)}
+                onBlur={() => setIntervalFocused(false)}                
+              />
+
+              <View style={modalStyles.datePickerContainer}>
+              <Text style={modalStyles.datePickerText}>
+                Start Date: 
+              </Text>
+              <DateTimePicker
+                value={new Date(newMedication.startDate)}
+                mode="date"
+                onChange={handleStartDateChange}
+                style={modalStyles.datePicker}
+                              
+              />
+              </View>
+
+              <View style={modalStyles.datePickerContainer}>
+              <Text style={modalStyles.datePickerText}>
+                End Date: 
+              </Text>
+              <DateTimePicker
+                value={new Date(newMedication.endDate)}
+                mode="date"
+                onChange={handleEndDateChange}
+                style={modalStyles.datePicker}
+              />
+              </View>
+  
+
+
           </View>
-          <View>
+          <View style={modalStyles.buttonContainer}>
 
               <Button
                 title='Add'

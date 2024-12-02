@@ -13,6 +13,7 @@ export const styles = StyleSheet.create({
     borderColor: '#ccc',
     marginVertical: 5,
   },
+  
   button: {
     backgroundColor: 'blue',
     padding: 10,
@@ -92,6 +93,61 @@ export const modalStyles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'rgba(0, 0, 0, 0.8)',
   },
+  inputContainer: {
+    width: '100%',
+    flex: 1,
+    justifyContent: 'center',
+    // padding: 20,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  input: {
+    width: '80%',
+    padding: 15,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    marginVertical: 5,
+    borderRadius: 10,
+    color: 'white',
+    fontSize: 16,
+    marginBottom: 10,
+    height: 50
+  },
+  datePickerContainer: {
+    marginBottom: 10,
+    borderColor: '#CCC',
+    borderWidth: 1,
+    borderRadius: 10,
+    width: '80%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    height: 50,
+    padding: 15,
+    alignItems: 'center',
+  },
+  datePicker: {
+    flex: 1,
+    
+  },
+  datePickerText: {
+    color: '#CCC',
+    fontSize: 16,
+    // textAlign: 'left',
+
+  },
+
+  buttonContainer: {
+    flex: 1/3,
+    // flexDirection: 'row',
+    // justifyContent: 'space-around',
+  },
+
+  button: {
+    fontSize: 16,
+    padding: 15,
+    
+  }
+
 });
 
 export const cameraStyles = StyleSheet.create({
