@@ -1,8 +1,9 @@
 import * as tf from '@tensorflow/tfjs';
 import { decodeJpeg } from '@tensorflow/tfjs-react-native';
-
+import runModel  from '@/hooks/runModel';
 const processPhoto = async (base64: string) => {
   try {
+    return 'viagra'
 
     await tf.ready();
     // Decode base64 image to Tensor
@@ -19,7 +20,7 @@ const processPhoto = async (base64: string) => {
     const batchedImage = normalizedImage.expandDims(0);
 
     // Pass the image to your CNN model
-    // runModel(batchedImage);
+    return runModel(batchedImage);
 
   } catch (error) {
     console.error('Error processing image:', error);

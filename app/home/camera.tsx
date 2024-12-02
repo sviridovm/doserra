@@ -11,7 +11,7 @@ export default function App() {
     const [facing, setFacing] = useState<CameraType>('back');
     const [permission, requestPermission] = useCameraPermissions();
     const cameraRef = React.useRef<CameraView>(null);
-    
+    const [text, setText] = useState<string>('No Pill Identified');
     const toggleFacing = () => {
         setFacing(facing === 'back' ? 'front' : 'back');
     };
@@ -23,9 +23,12 @@ export default function App() {
             quality: 0.5,
             base64: true,
           });
-          console.log('Photo taken:', photo);
+          // console.log('Photo taken:', photo);
           if (photo?.base64){
-            processPhoto(photo.base64);
+            const result = await processPhoto(photo.base64);
+            if (result) {
+              setText(result);
+            }
           } else {
             throw new Error('No photo taken');
           }
@@ -57,14 +60,17 @@ export default function App() {
           style={cameraStyles.camera} 
           ref={cameraRef}>
           </CameraView>
-            <View style={cameraStyles.buttonContainer}>
-              <TouchableOpacity onPress={takePicture}>
-                <Text>Take Picture</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={cameraStyles.button} onPress={toggleFacing}>
-                <Text>Flip Camera</Text>
-              </TouchableOpacity>
-            </View>
+          <View style={cameraStyles.buttonContainer}>
+            <TouchableOpacity onPress={takePicture} style={cameraStyles.button}>
+              <Text>Take Picture</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={cameraStyles.button} onPress={toggleFacing}>
+              <Text>Flip Camera</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={cameraStyles.resultContainer}>
+            <Text style={cameraStyles.buttonText}>{text}</Text>
+          </View>
         </SafeAreaView>
       );
 

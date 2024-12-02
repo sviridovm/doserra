@@ -14,6 +14,7 @@ export const initDatabase = async(db: SQLite.SQLiteDatabase) => {
                 start_date TEXT NOT NULL,
                 end_date TEXT NOT NULL,
                 username TEXT NOT NULL
+                FOREIGN KEY(username) REFERENCES users(username)
             );
         `);
   
@@ -25,6 +26,17 @@ export const initDatabase = async(db: SQLite.SQLiteDatabase) => {
                 password TEXT NOT NULL
             );
         `);
+
+        await db.execAsync(`
+            CREATE TABLE IF NOT EXISTS medication_intake (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                medication_id INTEGER NOT NULL,
+                intake_time TEXT NOT NULL,
+                taken BOOLEAN NOT NULL,
+                FOREIGN KEY(medication_id) REFERENCES medications(id)
+                );
+        `);
+
         console.log('Database initialized !');
     } catch (error) {
         console.log('Error while initializing the database : ', error);

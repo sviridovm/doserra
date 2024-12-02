@@ -98,21 +98,41 @@ export const cameraStyles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
+    backgroundColor: '#000',
   },
   camera: {
-    flex: 1,
+    flex: 8,
+    borderRadius: 20,
   },
   buttonContainer: {
-    flex: 1,
+    // flex: 1,
     flexDirection: 'row',
-    backgroundColor: 'transparent',
-    margin: 32,
+    justifyContent: 'space-between',
+    // alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    paddingVertical: 15,
   },
   button: {
     flex: 1,
-    // alignSelf: 'center',
-    alignItems: 'center',
+    marginHorizontal: 10,
+    backgroundColor: '#1E90FF',
+    paddingVertical: 12,
+    borderRadius: 8,
+    alignItems: 'center'
   },
+  buttonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  resultContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderColor: 'white',
+    borderWidth: 2,
+    borderRadius: 10,
+  }
 
 
 });

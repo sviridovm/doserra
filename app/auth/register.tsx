@@ -1,6 +1,6 @@
 import { SQLiteProvider, useSQLiteContext } from "expo-sqlite";
 import { useState } from "react";
-import { Alert, Pressable, TextInput, View, Text } from "react-native";
+import { Alert, Pressable, TextInput, View, Text, SafeAreaView } from "react-native";
 import { router } from "expo-router";
 import { StyleSheet } from "react-native";
 import { styles } from "@/styles/commons";
@@ -49,7 +49,7 @@ const RegisterScreen = () => {
     }
 
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
             <Text style={styles.title}>Register</Text>
             <TextInput 
                 style={styles.input}
@@ -69,6 +69,6 @@ const RegisterScreen = () => {
             <Pressable style={styles.link} onPress={() => router.replace('/auth/login')}>
                 <Text style={styles.linkText}>Already have an account? Login</Text>
             </Pressable>
-        </View>
+        </SafeAreaView>
     )
 }

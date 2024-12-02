@@ -35,31 +35,16 @@ const MedicationDetails = (medication: Medication) => {
   // !PLACEHOLDER
   const username = '1';
 
-  // useEffect( () => {
-  //   async function fetchMedicationData() {
-  //     const query = 'SELECT * FROM medications WHERE name = ? AND username = ?';
-  //     const all = db.getAllSync(query, [medication.name, username]) as QueryResult[];
-  //     console.log(all);
-  //     const result = all[0];  
-
-  //     if (result) {
-  //       setEndDate(new Date(result.end_date));
-  //       setDosage(result.dosage);
-  //       setStartDate(new Date(result.start_date));
-  //     } 
-      
-  //   }
-  //   fetchMedicationData();
-  // }, []);
-
   return (
     <View>
       <Text>Medication: {medication.name}</Text>
       <Text>Dosage: {medication.dosage}</Text>
-      <Text>Start Date: {medication.startDate}</Text>
+      {/* <Text>Start Date: {medication.startDate}</Text> */}
+
+      
 
       <Pressable style={styles.button} onPress={() => router.replace('/home')}>
-                <Text style={styles.buttonText} >Back</Text>
+        <Text style={styles.buttonText}>Back</Text>
       </Pressable>
 
       

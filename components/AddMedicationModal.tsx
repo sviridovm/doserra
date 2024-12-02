@@ -1,10 +1,10 @@
 import { modalStyles, styles } from "@/styles/commons";
-import { Button, Modal, SafeAreaView, TextInput } from "react-native";
+import { Button, Modal, SafeAreaView, TextInput, View } from "react-native";
 import { useSQLiteContext, SQLiteDatabase } from "expo-sqlite";
 import { Medication } from "@/utils/types";
-// import {useForm, controller} from "react-hook-form";
 import { defaultMedication } from "@/utils/types";
 import { useState } from "react";
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 type props = {
   modalVisible: boolean;
@@ -24,6 +24,20 @@ export default function AddMedicationModal({
   const db = useSQLiteContext();
   
   const [newMedication, setNewMedication] = useState(defaultMedication);
+
+  const [showStartPicker, setShowStartPicker] = useState(false);
+  const [showEndPicker, setShowEndPicker] = useState(false);
+
+  const handleStartDateChange = (_: any, selectedDate?: Date) => {
+    setShowStartPicker(false);
+    if (selectedDate) setNewMedication(({...newMedication, startDate: selectedDate.toISOString()}));
+  };
+
+  const handleEndDateChange = (_: any, selectedDate?: Date) => {
+    setShowEndPicker(false);
+    if (selectedDate) setNewMedication(({...newMedication, endDate: selectedDate.toISOString()}));
+
+  };
 
   const handleAddMedication = (db: SQLiteDatabase) => {
   
@@ -49,7 +63,8 @@ export default function AddMedicationModal({
           onRequestClose={() => setModalVisible(false)}
         >
           <SafeAreaView style={modalStyles.container}>
-            <SafeAreaView>
+            <View>
+
               <TextInput
                 placeholder='Medication Name'
                 onChangeText={(text) => setNewMedication({...newMedication, name: text})}
@@ -61,16 +76,25 @@ export default function AddMedicationModal({
               <TextInput
                 placeholder='Dosage'
                 keyboardType='numeric'
-                onChangeText={(text) => setNewMedication({...newMedication, dosage: Number(text)})}
+                onChangeText={(text) => setNewMedication({...newMedication, dosage: parseInt(text)})}
                 style={styles.input}
               />
   
-              <TextInput
-                placeholder='End Date'
-                // onChangeText={(text) => props.setDosage(text)}
-                style={styles.input}
+            <DateTimePicker
+              value={new Date(newMedication.endDate)}
+              mode="date"
+              onChange={handleEndDateChange}
+            />
+
+            <DateTimePicker
+              value={new Date(newMedication.startDate)}
+              mode="date"
+              onChange={handleStartDateChange}
               />
   
+          </View>
+          <View>
+
               <Button
                 title='Add'
                 onPress={() => handleAddMedication(db)}
@@ -83,9 +107,9 @@ export default function AddMedicationModal({
                   // setNewMedication(defaultMedication);
                   setModalVisible(false);
                 }}
-              />
+                />
               
-            </SafeAreaView>
+          </View>
           </SafeAreaView>
   
   
