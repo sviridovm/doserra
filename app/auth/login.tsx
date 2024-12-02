@@ -2,10 +2,10 @@ import { SQLiteProvider, useSQLiteContext } from "expo-sqlite";
 import { useState } from "react";
 import { Alert, Pressable, TextInput, View, StyleSheet, Text } from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context';
-
 import { initDatabase } from '@/hooks/initDatabase';
 import { Stack, router } from "expo-router";
 import { styles } from "@/styles/commons";
+import bcrypt from 'react-native-bcrypt';
 
 export default function HomeScreen() {
 
@@ -16,13 +16,20 @@ export default function HomeScreen() {
         )
 }
 
-
+interface UserEntry {
+    id: number;
+    username: string;
+    password: string;
+    salt: string;
+}
 const LoginScreen = () => {
 
     const db = useSQLiteContext();
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     
+
+
     //function to handle login logic
     const handleLogin = async() => {
         if  (username.length === 0 || password.length === 0) {
@@ -30,11 +37,19 @@ const LoginScreen = () => {
             return;
         }
         try {
-            const existingUser = await db.getFirstAsync('SELECT * FROM users WHERE username = ? AND password = ?', [username, password]);
+            const existingUser = await db.getFirstAsync<UserEntry>('SELECT * FROM users WHERE username = ?', [username]);
             if (!existingUser) {
                 Alert.alert('Error', 'Invalid credentials.');
                 return;
             }
+
+            const hashed_password = bcrypt.hashSync(password, existingUser.salt);
+            if (hashed_password !== existingUser.password) {
+                Alert.alert('Error', 'Invalid credentials.');
+                return;
+            }
+
+
             // Clear the fields
             setUsername('');
             setPassword('');

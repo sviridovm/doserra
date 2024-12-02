@@ -5,7 +5,7 @@ import { router } from "expo-router";
 import { StyleSheet } from "react-native";
 import { styles } from "@/styles/commons";
 import { initDatabase } from "@/hooks/initDatabase";
-
+import bcrypt from 'react-native-bcrypt';
 
 export default function HomeScreen() {
     return (
@@ -33,8 +33,13 @@ const RegisterScreen = () => {
                 Alert.alert('Error', 'Username already exists.');
                 return;
             }
+            
+            const salt = bcrypt.genSaltSync(10);
 
-            await db.runAsync('INSERT INTO users (username, password) VALUES (?, ?)', [username, password]);
+            const hashed_password = bcrypt.hashSync(password, salt);
+
+
+            await db.runAsync('INSERT INTO users (username, password, salt) VALUES (?, ?, ?)', [username, hashed_password, salt]);
             Alert.alert('Success', 'Account created successfully!');
             // Clear the fields
             setUsername('');
