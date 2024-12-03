@@ -1,6 +1,6 @@
 import { GestureHandlerRootView, ScrollView } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { View, Text, StyleSheet, Pressable, Modal } from 'react-native';
+import { View, Text, StyleSheet, Pressable, Modal, Alert } from 'react-native';
 import { useLocalSearchParams, router } from 'expo-router';
 import { SQLiteProvider, useSQLiteContext } from 'expo-sqlite';
 import { useEffect, useState } from 'react';
@@ -38,7 +38,7 @@ interface MedicationIntake {
 }
 
 const MedicationDetails = (medication: Medication) => {
-  // !PLACEHOLDER
+  //! PLACEHOLDER
   const username = '1';
   const db = useSQLiteContext();
   const [intakes, setIntakes] = useState<MedicationIntake[]>([]);
@@ -51,9 +51,27 @@ const MedicationDetails = (medication: Medication) => {
     const fetchIntakes = async() => {
       try {
 
-        const intakes = await db.getAllAsync<MedicationIntake>('SELECT * FROM medication_intake WHERE medication_id = ?', [medication.id]);
-        setIntakes(intakes);
-        console.log(intakes);
+        const res_intakes = await db.getAllAsync<MedicationIntake>('SELECT * FROM medication_intake WHERE medication_id = ?', [medication.id]);
+        
+        const current_time = new Date().getTime();
+        // sort intakes by closest to current time
+        // distance = |current_time - intake_time|
+        console.log('----------------------------------------');
+        console.log(res_intakes);
+        console.log(res_intakes.length);
+        res_intakes.sort((a, b) => Math.abs(current_time - new Date(a.intake_time).getTime()) - Math.abs(new Date(b.intake_time).getTime() - current_time));
+        // get the first 10 intakes
+        console.log('#######################################');
+        console.log(res_intakes);
+        const new_intakes = res_intakes.slice(0, 10); 
+        console.log(res_intakes.length);
+        
+        console.log('........................................');
+        // sort intakes by their intake time
+        new_intakes.sort((a, b) => new Date(a.intake_time).getTime() - new Date(b.intake_time).getTime());
+        
+        setIntakes(new_intakes);
+        // console.log(intakes);
       } catch (error) {
         console.log('Error while fetching intakes : ', error);
       }
@@ -80,6 +98,11 @@ const MedicationDetails = (medication: Medication) => {
   }
 
   const handlePress = (intake: MedicationIntake) => {
+    if (new Date(intake.intake_time) > new Date()) {
+      Alert.alert('Cannot log future intakes');
+      return;
+    }
+
     setSelectedIntake(intake);
     setModalVisible(true);
   };
@@ -94,7 +117,7 @@ const MedicationDetails = (medication: Medication) => {
       setIntakes(updatedIntakes);
 
       try {
-        await db.runAsync(
+        db.runAsync(
           `UPDATE medication_intake SET taken = ? WHERE id = ? AND medication_id = ?`,
           [!selectedIntake.taken, selectedIntake.id, medication.id]
         );
@@ -160,16 +183,16 @@ const MedicationDetails = (medication: Medication) => {
             </Text>
             <View style={styles.modalActions}>
               <Pressable
-                style={[styles.modalButton, styles.confirmButton]}
-                onPress={handleConfirm}
-              >
-                <Text style={styles.buttonText}>Yes</Text>
-              </Pressable>
-              <Pressable
                 style={[styles.modalButton, styles.cancelButton]}
                 onPress={handleCancel}
               >
                 <Text style={styles.buttonText}>No</Text>
+              </Pressable>
+              <Pressable
+                style={[styles.modalButton, styles.confirmButton]}
+                onPress={handleConfirm}
+              >
+                <Text style={styles.buttonText}>Yes</Text>
               </Pressable>
             </View>
           </View>

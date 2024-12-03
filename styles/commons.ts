@@ -66,6 +66,10 @@ export const medicationListStyles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     paddingHorizontal: 20,
+    justifyContent: 'center',
+    // borderColor: 'black',
+    // borderWidth: 2,
+    marginBottom: 20,
   },
   
   button: {
@@ -76,12 +80,16 @@ export const medicationListStyles = StyleSheet.create({
     paddingVertical: 15,
     paddingHorizontal: 20,
     marginVertical: 8, // Adds spacing between buttons
-    width: '100%',     // Full width within container
-    alignSelf: 'center', // Center horizontally
+    width: 200,     // Full width within container
+    // alignSelf: 'center', // Center horizontally
   },
   listContainer: {
-    width: '100%', // Make sure it takes full width of the container
-    paddingBottom: 20, // Add some space at the bottom for scrolling
+    // width: '100%', // Make sure it takes full width of the container
+    // paddingBottom: 20, // Add some space at the bottom for scrolling
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    
   },
   
 });
