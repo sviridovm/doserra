@@ -1,6 +1,6 @@
 import { GestureHandlerRootView, ScrollView } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { View, Text, StyleSheet, Pressable } from 'react-native';
+import { View, Text, StyleSheet, Pressable, Modal } from 'react-native';
 import { useLocalSearchParams, router } from 'expo-router';
 import { SQLiteProvider, useSQLiteContext } from 'expo-sqlite';
 import { useEffect, useState } from 'react';
@@ -42,6 +42,10 @@ const MedicationDetails = (medication: Medication) => {
   const username = '1';
   const db = useSQLiteContext();
   const [intakes, setIntakes] = useState<MedicationIntake[]>([]);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedIntake, setSelectedIntake] = useState<MedicationIntake | null>(
+    null
+  );
 
   useEffect(() => {
     const fetchIntakes = async() => {
@@ -55,7 +59,7 @@ const MedicationDetails = (medication: Medication) => {
       }
     }
     fetchIntakes();
-  }, []);
+  }, [db]);
 
 
   const getBackgroundColor = (intake: MedicationIntake) => {
@@ -75,6 +79,39 @@ const MedicationDetails = (medication: Medication) => {
     return `${hours}:${minutes}`;  
   }
 
+  const handlePress = (intake: MedicationIntake) => {
+    setSelectedIntake(intake);
+    setModalVisible(true);
+  };
+
+  const handleConfirm = async () => {
+    if (selectedIntake) {
+      const updatedIntakes = intakes.map((intake) =>
+        intake.id === selectedIntake.id
+          ? { ...intake, taken: !intake.taken }
+          : intake
+      );
+      setIntakes(updatedIntakes);
+
+      try {
+        await db.runAsync(
+          `UPDATE medication_intake SET taken = ? WHERE id = ? AND medication_id = ?`,
+          [!selectedIntake.taken, selectedIntake.id, medication.id]
+        );
+      } catch (error) {
+        console.log("Error updating intake:", error);
+      }
+
+      setSelectedIntake(null);
+      setModalVisible(false);
+    }
+  };
+
+  const handleCancel = () => {
+    setSelectedIntake(null);
+    setModalVisible(false);
+  };
+
 
   return (
     <View>
@@ -82,30 +119,62 @@ const MedicationDetails = (medication: Medication) => {
         <Text>{medication.name}</Text>
       </View>
 
+
       <Text>Dosage: {medication.dosage}</Text>
       <Text></Text>
 
       <View style={styles.grid}>
         {intakes.map((intake, index) => (
-          <View
-            key={intake.id}
-            style={[styles.gridItem, { backgroundColor: getBackgroundColor(intake) }]}
-          >
+            <Pressable
+              key={intake.id}
+              onPress={() => handlePress(intake)}
+              style={({ pressed }) => [
+                styles.gridItem,
+                { backgroundColor: getBackgroundColor(intake) },
+              ]}
+              >
+                
+                <Text style={styles.intakeText}>
+                  {new Date(intake.intake_time).toLocaleDateString()}
+                </Text>
 
-              
-            <Text style={styles.intakeText}>{new Date(intake.intake_time).toLocaleDateString()}</Text>
-            <Text style={styles.intakeText}>{getTime(intake.intake_time)}</Text>
+                <Text style={styles.intakeText}>{getTime(intake.intake_time)}</Text>
+              </Pressable>
+          ))}
+        </View>
 
+        <Pressable onPress={() => router.replace('/home')}>
+          <Text> Back </Text>
+        </Pressable>
+
+        <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={handleCancel}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalText}>
+              Are you sure you want to log this medication?
+            </Text>
+            <View style={styles.modalActions}>
+              <Pressable
+                style={[styles.modalButton, styles.confirmButton]}
+                onPress={handleConfirm}
+              >
+                <Text style={styles.buttonText}>Yes</Text>
+              </Pressable>
+              <Pressable
+                style={[styles.modalButton, styles.cancelButton]}
+                onPress={handleCancel}
+              >
+                <Text style={styles.buttonText}>No</Text>
+              </Pressable>
+            </View>
           </View>
-        ))}
-      </View>
-
-
-      <Pressable onPress={() => router.replace('/home')}>
-        <Text >Back</Text>
-      </Pressable>
-
-      
+        </View>
+      </Modal>
     </View>
   )
 
@@ -144,5 +213,47 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 10,
     textAlign: 'center',
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalContent: {
+    width: "80%",
+    padding: 20,
+    backgroundColor: "white",
+    borderRadius: 10,
+    alignItems: "center",
+    elevation: 5,
+  },
+  modalText: {
+    fontSize: 18,
+    textAlign: "center",
+    marginBottom: 20,
+  },
+  modalActions: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "100%",
+  },
+  modalButton: {
+    padding: 10,
+    borderRadius: 5,
+    alignItems: "center",
+    justifyContent: "center",
+    flex: 1,
+    marginHorizontal: 5,
+  },
+  confirmButton: {
+    backgroundColor: "#4CAF50",
+  },
+  cancelButton: {
+    backgroundColor: "#F44336",
+  },
+  buttonText: {
+    color: "white",
+    fontWeight: "bold",
   },
 });
