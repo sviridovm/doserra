@@ -34,7 +34,7 @@ const RegisterScreen = () => {
                 return;
             }
             
-            const salt = bcrypt.genSaltSync(10);
+            const salt = bcrypt.genSaltSync(4);
 
             const hashed_password = bcrypt.hashSync(password, salt);
 

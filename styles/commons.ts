@@ -4,7 +4,8 @@ export const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 30,
+    marginBottom: 10,
+    alignSelf: 'center',
   },
   input: {
     width: '80%',
@@ -64,12 +65,9 @@ export const styles = StyleSheet.create({
 export const medicationListStyles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    paddingHorizontal: 20,
     justifyContent: 'center',
-    // borderColor: 'black',
-    // borderWidth: 2,
-    marginBottom: 20,
+    padding: 0,
+    margin: 0,
   },
   
   button: {

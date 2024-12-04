@@ -1,49 +1,75 @@
-import { Link, Stack } from 'expo-router';
 import { View, Text, StyleSheet, Button, Modal, TextInput } from 'react-native';
 import { useState, useEffect } from 'react';
-import { ScrollView } from 'react-native-gesture-handler';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { SQLiteProvider, useSQLiteContext } from 'expo-sqlite';
-import * as SQLite from 'expo-sqlite';
 import { Medication } from '../../utils/types';
 import { initDatabase } from '@/hooks/initDatabase';
-import MedicationList from '@/components/MedicationList';
+import MedicationList from '@/components/MedicationListComponents/MedicationList';
 import { medicationListStyles, modalStyles, styles } from "@/styles/commons";
 import AddMedicationModal from '@/components/AddMedicationModal';
-import FloatingButton from '@/components/FloatingButton';
-import { defaultMedication } from '@/utils/types';
+import CalendarList from '@/components/calendarList';
+import getMedsFromDate from '@/hooks/getMedsFromDate'; 
+import { LinearGradient }from 'expo-linear-gradient';
 
-// const defaultMedication: Medication = {name: '', dosage: 0, startDate: String(new Date()), endDate: String(new Date()), username: '', id: -1}
 
 export default function HomeScreen() {
-
   
+
   const [medications, setMedications] = useState<Medication[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
+  
+  useEffect(() => {
+    getMedsFromDate(new Date(), setMedications);
+  }, []);
 
   
   return (
-    <GestureHandlerRootView>
-    <ScrollView>
     <SQLiteProvider databaseName='medications.db' onInit={initDatabase}>
-    <SafeAreaView style={medicationListStyles.container}>
-        <Text style={styles.title}>Medications</Text> 
-        <MedicationList medications={medications} setMedications={setMedications} username='1'/>
+      <LinearGradient 
+      colors={['rgba(52, 235, 119, 0.3)', 'rgba(42, 189, 184, 0.3)']}
+      style={{
+        // flex: 1,
+        position: 'absolute',
+        width: '100%',
+        height: '100%',
+        
 
+      }}
+      // start={[0, 1]} end={[1, 0]}
+      start={[0, 0]} end={[1, 0]}
+      />
+
+    {/* <SafeAreaView style={{...medicationListStyles.container, borderWidth: 1}}> */}
+    <GestureHandlerRootView
+      style={{
+        ...medicationListStyles.container,
+      }}
+    >
+        
+
+        <CalendarList setMedications={setMedications}/>
+        
         <AddMedicationModal 
           modalVisible={modalVisible}
           setModalVisible={setModalVisible}
           setMedications={setMedications}
         />
+        
 
-        <FloatingButton onPress={setModalVisible} />
+        <MedicationList 
+        medications={medications} 
+        setMedications={setMedications} 
+        setModalVisible={setModalVisible}
+        username='1'/>
 
 
-    </SafeAreaView>
-    </SQLiteProvider>
-    </ScrollView>
+        {/* <FloatingButton onPress={setModalVisible} /> */}
+
+
     </GestureHandlerRootView>
+    {/* </SafeAreaView> */}
+    </SQLiteProvider>
   );
 }
 

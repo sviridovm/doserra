@@ -10,4 +10,11 @@ export interface Medication {
   username: string;
 }
 
+export interface MedicationIntake {
+  id: number;
+  medication_id: number;
+  intake_time: string;
+  taken: boolean;
+}
+
 export const defaultMedication: Medication = {name: '', dosage: 0, interval: 24, startDate: String(new Date()), endDate: String(new Date()), username: '', id: -1}

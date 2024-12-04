@@ -4,7 +4,7 @@ import { View, Text, StyleSheet, Pressable, Modal, Alert } from 'react-native';
 import { useLocalSearchParams, router } from 'expo-router';
 import { SQLiteProvider, useSQLiteContext } from 'expo-sqlite';
 import { useEffect, useState } from 'react';
-import { Medication, defaultMedication } from '../../utils/types';
+import { Medication, MedicationIntake } from '../../utils/types';
 // import { styles } from '@/styles/commons';
 
 export default function DetailsScreen() {
@@ -30,12 +30,7 @@ export default function DetailsScreen() {
 }
 
   
-interface MedicationIntake {
-  id: number;
-  medication_id: number;
-  intake_time: string;
-  taken: boolean;
-}
+
 
 const MedicationDetails = (medication: Medication) => {
   //! PLACEHOLDER
@@ -56,20 +51,13 @@ const MedicationDetails = (medication: Medication) => {
         const current_time = new Date().getTime();
         // sort intakes by closest to current time
         // distance = |current_time - intake_time|
-        console.log('----------------------------------------');
-        console.log(res_intakes);
-        console.log(res_intakes.length);
         res_intakes.sort((a, b) => Math.abs(current_time - new Date(a.intake_time).getTime()) - Math.abs(new Date(b.intake_time).getTime() - current_time));
         // get the first 10 intakes
-        console.log('#######################################');
-        console.log(res_intakes);
         const new_intakes = res_intakes.slice(0, 10); 
-        console.log(res_intakes.length);
         
-        console.log('........................................');
         // sort intakes by their intake time
         new_intakes.sort((a, b) => new Date(a.intake_time).getTime() - new Date(b.intake_time).getTime());
-        
+
         setIntakes(new_intakes);
         // console.log(intakes);
       } catch (error) {
@@ -92,9 +80,22 @@ const MedicationDetails = (medication: Medication) => {
 
   const getTime = (intake_time: string) => {
     const date = new Date(intake_time);
-    const hours = date.getHours();
+    let hours = date.getHours();
     const minutes = date.getMinutes();
-    return `${hours}:${minutes}`;  
+    let am = true;
+    let minutesString;
+    let hoursString;
+    if (minutes < 10) {
+      minutesString = `0${minutes}`;
+    }
+
+    if (hours >= 13) {
+      hours -= 12;
+      am = false;
+    }
+
+
+    return `${hours}:${minutes} ${am ? 'AM' : 'PM'}`;  
   }
 
   const handlePress = (intake: MedicationIntake) => {
@@ -221,14 +222,15 @@ const styles = StyleSheet.create({
   grid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-between',
+    // justifyContent: 'space-',
   },
   gridItem: {
-    width: '18%', // Fits 10 items per row with spacing
+    width: '19%', // Fits 10 items per row with spacing
     aspectRatio: 1, // Makes the items square
     justifyContent: 'center',
     alignItems: 'center',
     marginVertical: 5,
+    marginHorizontal: '0.5%',
     borderRadius: 8,
     padding: 5,
   },

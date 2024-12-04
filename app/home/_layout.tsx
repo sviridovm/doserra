@@ -13,6 +13,7 @@ export default function RootLayout() {
         headerShadowVisible: false,
         headerTintColor: '#fff',
         tabBarStyle: {
+        // marginVertical: 0,
         backgroundColor: '#25292e',
         animationName: 'slideIn',
         },

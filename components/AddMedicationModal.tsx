@@ -5,7 +5,7 @@ import { Medication } from "@/utils/types";
 import { defaultMedication } from "@/utils/types";
 import { useState } from "react";
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { mod } from "@tensorflow/tfjs";
+// import { mod } from "@tensorflow/tfjs";
 
 type props = {
   modalVisible: boolean;
