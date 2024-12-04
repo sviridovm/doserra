@@ -1,10 +1,11 @@
 import { SQLiteDatabase, SQLiteProvider, useSQLiteContext } from "expo-sqlite";
 import React, { useEffect, useState } from "react";
-import { FlatList, View, StyleSheet, Text, Pressable} from "react-native";
+import { FlatList, View, StyleSheet, Text, Pressable, NativeSyntheticEvent, NativeScrollEvent} from "react-native";
 import Ionicons from '@expo/vector-icons/Ionicons';
 import * as SQLite from 'expo-sqlite';
 import { MedicationIntake, Medication } from "@/utils/types";
 import getMedsFromDate from "@/hooks/getMedsFromDate";
+import { NativeComponentType } from "react-native/Libraries/Utilities/codegenNativeComponent";
 type props = {
     setMedications: (medications: Medication[]) => void;
 };
@@ -14,11 +15,11 @@ export default function CalendarList({setMedications}: props) {
 
     const [dates, setDates] = useState<Date[]>([]);
     const flatlistRef = React.useRef<FlatList>(null);
-    const [isReady, setIsReady] = useState(false);
-    // const dates: Date[] = []
+    const [currentDate, setCurrentDate] = useState(new Date());
+    const [calCenter, setCalCenter] = useState(new Date());
 
   useEffect(() => {
-    const today = new Date();
+    const today = calCenter;
     const week = [];
     for (let i = -3; i <= 3; i++) {
       const day = new Date();
@@ -30,22 +31,12 @@ export default function CalendarList({setMedications}: props) {
 
     // scroll to middle
     
-  }, []);
+  }, [calCenter]);
 
+  // Update the calendar when the user scrolls
+const handleMomentumScrollEnd = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
 
-//   useEffect(() => {
-//     if (dates.length > 0) {
-//       setIsReady(true);
-//     }
-//   }, [dates]);
-
-// useEffect(() => {
-//     const middle = Math.floor(dates.length / 2);
-//     if (middle == 0) return;
-//     flatlistRef.current?.scrollToIndex({index: middle, animated: false, viewPosition: 0.5});
-//     }, [flatlistRef, dates, isReady]);
-
-
+};
 
 
 
@@ -56,12 +47,13 @@ export default function CalendarList({setMedications}: props) {
 
             <FlatList
                 data={dates}
-                renderItem={(item) => renderDateItem(item, setMedications)}
+                renderItem={(item) => renderDateItem(item, setMedications, setCurrentDate)}
                 keyExtractor={(item) => item.toISOString()}
                 horizontal
                 showsHorizontalScrollIndicator={false}
                 contentContainerStyle={styles.calendarBox}
                 ref={flatlistRef}
+                onMomentumScrollEnd={handleMomentumScrollEnd}
                 
                 />
             
@@ -74,7 +66,7 @@ export default function CalendarList({setMedications}: props) {
 
 const daysOfTheWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 // item}: {item: Date}, {props}: {props: props.setMedications}
-const renderDateItem = ({item}: {item:Date} , setMedications: (medications: Medication[]) => void)  => {
+const renderDateItem = ({item}: {item: Date}, setMedications: (medications: Medication[]) => void, setCurrentDate: React.Dispatch<React.SetStateAction<Date>>) => {
 
     const getIcon = (date: Date) => {
         const otherDate = new Date(date);
@@ -89,15 +81,16 @@ const renderDateItem = ({item}: {item:Date} , setMedications: (medications: Medi
         } else {
             return 'person'
         }
-
-        
-    }
+}
     
     return (
         <View style={styles.itemContainer}>
             <Pressable 
             style={styles.button}
-            onPress={() => getMedsFromDate(item, setMedications)}
+            onPress={() => {
+                setCurrentDate(item);
+                getMedsFromDate(item, setMedications);
+            }}
             >
                 <Ionicons style={styles.icon} name={getIcon(item)} size={24} color='black' />  
                 <Text style={styles.textDayOfWeek}>{daysOfTheWeek[item.getDay()]}</Text>
