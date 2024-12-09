@@ -2,36 +2,44 @@ import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
   title: {
-    fontSize: 24,
+    fontSize: 32,
     fontWeight: 'bold',
-    marginBottom: 10,
+    marginBottom: 20,
     alignSelf: 'center',
+    color: '#333',
   },
   input: {
     width: '80%',
-    padding: 10,
+    padding: 15,
     borderWidth: 1,
     borderColor: '#ccc',
-    marginVertical: 5,
+    marginVertical: 10,
+    borderRadius: 25,
+    backgroundColor: '#fafafa',
+    alignSelf: 'center',
+    fontSize: 16,
   },
-  
   button: {
-    backgroundColor: 'blue',
-    padding: 10,
+    backgroundColor: '#007bff',
+    padding: 15,
     marginVertical: 10,
     width: '80%',
-    borderRadius: 5,
+    borderRadius: 25,
+    alignSelf: 'center',
+    alignItems: 'center',
   },
   buttonText: {
     color: 'white',
     textAlign: 'center',
     fontSize: 18,
   },
-  link : {
-    marginTop: 10,
+  link: {
+    marginTop: 20,
   },
   linkText: {
-    color: 'blue',
+    color: '#007bff',
+    fontSize: 16,
+    textAlign: 'center',
   },
   userText: {
     fontSize: 18,
@@ -41,24 +49,20 @@ export const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    padding: 20,
+    backgroundColor: '#f5f5f5',
   },
   medicationText: {
     fontSize: 17,
     textAlign: 'center',
-
   },
-
   header: {
-    flexDirection: 'row', // Align items in a row
-    justifyContent: 'space-between', // Space items across the header
-    alignItems: 'center', // Center items vertically
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     padding: 10,
-    backgroundColor: '#f9f9f9', // Optional: background color for header
+    backgroundColor: '#f9f9f9',
   },
-  
-  
-  
-  
 });
 
 

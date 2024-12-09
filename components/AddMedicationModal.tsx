@@ -1,4 +1,4 @@
-import { modalStyles, styles } from "@/styles/commons";
+import { modalStyles } from "@/styles/commons";
 import { Button, Modal, SafeAreaView, TextInput, View, Text, Alert } from "react-native";
 import { useSQLiteContext, SQLiteDatabase } from "expo-sqlite";
 import { Medication } from "@/utils/types";

@@ -52,8 +52,8 @@ const MedicationDetails = (medication: Medication) => {
         // sort intakes by closest to current time
         // distance = |current_time - intake_time|
         res_intakes.sort((a, b) => Math.abs(current_time - new Date(a.intake_time).getTime()) - Math.abs(new Date(b.intake_time).getTime() - current_time));
-        // get the first 10 intakes
-        const new_intakes = res_intakes.slice(0, 10); 
+        // get the first 9 intakes
+        const new_intakes = res_intakes.slice(0, 9); 
         
         // sort intakes by their intake time
         new_intakes.sort((a, b) => new Date(a.intake_time).getTime() - new Date(b.intake_time).getTime());
