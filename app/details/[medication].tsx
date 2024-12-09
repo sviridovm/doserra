@@ -139,39 +139,34 @@ const MedicationDetails = (medication: Medication) => {
 
   return (
     <View>
-      <View>
-        <Text>{medication.name}</Text>
+      <Text style={styles.medicationHeader}>{medication.name}</Text>
+      <Text style={styles.dosageText}>Dosage: {medication.dosage}</Text>
+      <View style={styles.grid}>
+        {intakes.map((intake) => (
+          <Pressable
+            key={intake.id}
+            onPress={() => handlePress(intake)}
+            style={({ pressed }) => [
+              styles.gridItem,
+              { backgroundColor: getBackgroundColor(intake) },
+            ]}
+          >
+            <Text style={styles.intakeText}>
+              {new Date(intake.intake_time).toLocaleDateString()}
+            </Text>
+            <Text style={styles.intakeText}>{getTime(intake.intake_time)}</Text>
+          </Pressable>
+        ))}
       </View>
 
+      <Pressable onPress={() => router.replace("/home")}>
+        <Text style={[styles.intakeText, { color: "#4A90E2", marginTop: 20 }]}>
+          Back
+        </Text>
+      </Pressable>
 
-      <Text>Dosage: {medication.dosage}</Text>
-      <Text></Text>
-
-      <View style={styles.grid}>
-        {intakes.map((intake, index) => (
-            <Pressable
-              key={intake.id}
-              onPress={() => handlePress(intake)}
-              style={({ pressed }) => [
-                styles.gridItem,
-                { backgroundColor: getBackgroundColor(intake) },
-              ]}
-              >
-                
-                <Text style={styles.intakeText}>
-                  {new Date(intake.intake_time).toLocaleDateString()}
-                </Text>
-
-                <Text style={styles.intakeText}>{getTime(intake.intake_time)}</Text>
-              </Pressable>
-          ))}
-        </View>
-
-        <Pressable onPress={() => router.replace('/home')}>
-          <Text> Back </Text>
-        </Pressable>
-
-        <Modal
+      {/* Modal */}
+      <Modal
         animationType="slide"
         transparent={true}
         visible={modalVisible}
@@ -200,9 +195,8 @@ const MedicationDetails = (medication: Medication) => {
         </View>
       </Modal>
     </View>
-  )
-
-}
+  );
+};
 
 export function CountdownTimer() {
   const medication = String(useLocalSearchParams());
@@ -212,32 +206,41 @@ export function CountdownTimer() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#f5f5f5", // Light background for better contrast
     padding: 16,
   },
   header: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 10,
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#333", // Darker text for better readability
+    marginBottom: 20,
+    textAlign: "center",
   },
   grid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    // justifyContent: 'space-',
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between", // Evenly spaced items
   },
   gridItem: {
-    width: '19%', // Fits 10 items per row with spacing
+    width: "30%", // Fits 3 items per row
     aspectRatio: 1, // Makes the items square
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginVertical: 5,
-    marginHorizontal: '0.5%',
-    borderRadius: 8,
-    padding: 5,
+    justifyContent: "center",
+    alignItems: "center",
+    marginVertical: 8,
+    backgroundColor: "#4A90E2", // Attractive blue shade
+    borderRadius: 12,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    elevation: 5,
+    padding: 10,
   },
   intakeText: {
-    color: 'white',
-    fontSize: 10,
-    textAlign: 'center',
+    color: "#fff", // White text for contrast
+    fontSize: 12,
+    fontWeight: "bold",
+    textAlign: "center",
   },
   modalOverlay: {
     flex: 1,
@@ -246,17 +249,23 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   modalContent: {
-    width: "80%",
-    padding: 20,
+    width: "85%",
+    padding: 24,
     backgroundColor: "white",
-    borderRadius: 10,
+    borderRadius: 12,
     alignItems: "center",
-    elevation: 5,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 10,
   },
   modalText: {
-    fontSize: 18,
+    fontSize: 20,
+    fontWeight: "600",
     textAlign: "center",
     marginBottom: 20,
+    color: "#333",
   },
   modalActions: {
     flexDirection: "row",
@@ -264,21 +273,35 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   modalButton: {
-    padding: 10,
-    borderRadius: 5,
+    padding: 12,
+    borderRadius: 8,
     alignItems: "center",
     justifyContent: "center",
     flex: 1,
-    marginHorizontal: 5,
+    marginHorizontal: 10,
   },
   confirmButton: {
-    backgroundColor: "#4CAF50",
+    backgroundColor: "#4CAF50", // Green for confirmation
   },
   cancelButton: {
-    backgroundColor: "#F44336",
+    backgroundColor: "#F44336", // Red for cancellation
   },
   buttonText: {
     color: "white",
     fontWeight: "bold",
+    fontSize: 14,
+  },
+  medicationHeader: {
+    fontSize: 22,
+    fontWeight: "bold",
+    color: "#4A90E2",
+    textAlign: "center",
+    marginVertical: 10,
+  },
+  dosageText: {
+    fontSize: 16,
+    color: "#555",
+    marginBottom: 20,
+    textAlign: "center",
   },
 });
