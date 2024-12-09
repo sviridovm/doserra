@@ -140,7 +140,7 @@ const MedicationDetails = (medication: Medication) => {
   return (
     <View>
       <Text style={styles.medicationHeader}>{medication.name}</Text>
-      <Text style={styles.dosageText}>Dosage: {medication.dosage}</Text>
+      <Text style={styles.dosageText}>Dosage: {medication.dosage} mg</Text>
       <View style={styles.grid}>
         {intakes.map((intake) => (
           <Pressable

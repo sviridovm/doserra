@@ -20,11 +20,16 @@ const RegisterScreen = () => {
     const db = useSQLiteContext();
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
 
     //function to handle register logic
     const handleRegister = async() => {
         if  (username.length === 0 || password.length === 0) {
             Alert.alert('Attention!', 'Please enter all the fields.');
+            return;
+        }
+        if (password !== confirmPassword) {
+            Alert.alert('Error', 'Passwords do not match.');
             return;
         }
         try {
@@ -59,14 +64,25 @@ const RegisterScreen = () => {
             <TextInput 
                 style={styles.input}
                 placeholder='Username'
+                placeholderTextColor={'gray'}
                 value={username}
                 onChangeText={setUsername}
             />
             <TextInput 
                 style={styles.input}
                 placeholder='Password'
+                placeholderTextColor={'gray'}
                 value={password}
                 onChangeText={setPassword}
+                secureTextEntry = {true}
+            />
+            <TextInput 
+                style={styles.input}
+                placeholder='Confirm Password'
+                placeholderTextColor={'gray'}
+                value={confirmPassword}
+                onChangeText={setConfirmPassword}
+                secureTextEntry = {true}
             />
             <Pressable style={styles.button} onPress={handleRegister}>
                 <Text style={styles.buttonText} >Register</Text>
