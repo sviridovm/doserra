@@ -14,15 +14,24 @@ export default function DetailsScreen() {
   const medication = JSON.parse(medicationJSON) as Medication;
   // console.log(medication);
   // const medication = medicationJSON;
+
+  const editMed = (med : Medication) => {
+    // Your edit medication logic here
+    console.log('Edit medication:', med);
+    // For example, navigate to an edit screen or open a form modal
+  };
   
   return (
     <GestureHandlerRootView>
       <ScrollView>
         <SQLiteProvider databaseName='medications.db'>
-          <SafeAreaView style={styles.container}>
-            {/* <MedicationDetails medication={medication}/> */}
-            <MedicationDetails {...medication}/>
-          </SafeAreaView>
+        <View style={styles.headerContainer}>
+              <Text style={styles.header}>Medication Details</Text>
+              <Pressable style={styles.editButton} onPress={() => editMed(medication)}>
+                <Text style={styles.editButtonText}>Edit</Text>
+              </Pressable>
+          </View>
+          <MedicationDetails {...medication}/>
         </SQLiteProvider>
       </ScrollView>
     </GestureHandlerRootView>
@@ -209,12 +218,29 @@ const styles = StyleSheet.create({
     backgroundColor: "#f5f5f5", // Light background for better contrast
     padding: 16,
   },
+  headerContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 20,
+    marginTop: 45,
+  },
   header: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "#333", // Darker text for better readability
-    marginBottom: 20,
+    color: "#333",
     textAlign: "center",
+  },
+  editButton: {
+    backgroundColor: "#4A90E2",
+    padding: 10,
+    borderRadius: 8,
+    marginRight: 10,
+  },
+  editButtonText: {
+    color: "white",
+    fontWeight: "bold",
+    fontSize: 14,
   },
   grid: {
     flexDirection: "row",
