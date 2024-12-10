@@ -16,11 +16,8 @@ export default function RootLayout() {
         },
         headerShown: false
       }}
-      // initialRouteName='auth/login'
       >
 
-          {/* <Stack.Screen name="home" /> */}
-          {/* <Stack.Screen name="details" /> */}
           <Stack.Screen name="auth"  />
     </Stack>
   );

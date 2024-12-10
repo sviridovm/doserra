@@ -8,7 +8,7 @@ export default function RootLayout() {
       screenOptions={{
         tabBarActiveTintColor: '#ffd33d',
         headerStyle: {
-          backgroundColor: '#25292e',
+          backgroundColor: 'white',
         },
         headerShadowVisible: false,
         headerTintColor: '#fff',
@@ -19,23 +19,27 @@ export default function RootLayout() {
         },
       }}
       >
-        <Tabs.Screen name="index" 
-            options={{
-              tabBarIcon: ({ color, focused }) => (
-                <Ionicons name={focused ? 'home-sharp' : 'home-outline'} color={color} size={24} />
-              )
-            }}
-        />
         <Tabs.Screen name="camera" 
             options={{
+              tabBarLabel: 'Camera',
               tabBarIcon: ({ color, size }) => (
                 <Ionicons name="camera" color={color} size={size} />
               )
 
             }}
           />
+
+        <Tabs.Screen name="index" 
+            options={{
+              tabBarLabel: 'Home',
+              tabBarIcon: ({ color, focused }) => (
+                <Ionicons name={focused ? 'home-sharp' : 'home-outline'} color={color} size={24} />
+              )
+            }}
+        />
         <Tabs.Screen name="account"
             options={{
+              tabBarLabel: 'Account',
               tabBarIcon: ({ color, size }) => (
                 <Ionicons name="person" color={color} size={size} />
               )

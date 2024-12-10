@@ -1,10 +1,11 @@
-import { StyleSheet } from 'react-native';
+import {StyleSheet} from 'react-native';
 
 export const styles = StyleSheet.create({
   title: {
     fontSize: 32,
     fontWeight: 'bold',
-    marginBottom: 20,
+    marginTop: 20,
+    marginBottom: 2,
     alignSelf: 'center',
     color: '#333',
   },
@@ -20,7 +21,7 @@ export const styles = StyleSheet.create({
     fontSize: 16,
   },
   button: {
-    backgroundColor: '#007bff',
+    backgroundColor: '#00796b',
     padding: 15,
     marginVertical: 10,
     width: '80%',
@@ -63,6 +64,12 @@ export const styles = StyleSheet.create({
     padding: 10,
     backgroundColor: '#f9f9f9',
   },
+  backgroundImage: {
+    flex: 1,
+    resizeMode: 'cover', // Ensures the image covers the entire screen
+    justifyContent: 'center', // Adjust as needed for layout
+    alignItems: 'center', // Adjust as needed for layout
+}
 });
 
 
@@ -73,7 +80,7 @@ export const medicationListStyles = StyleSheet.create({
     padding: 0,
     margin: 0,
   },
-  
+
   button: {
     backgroundColor: '#f9f9f9',
     borderColor: '#ddd',
@@ -81,8 +88,8 @@ export const medicationListStyles = StyleSheet.create({
     borderRadius: 10,
     paddingVertical: 15,
     paddingHorizontal: 20,
-    marginVertical: 8, // Adds spacing between buttons
-    width: 200,     // Full width within container
+    marginVertical: 8,  // Adds spacing between buttons
+    width: 200,         // Full width within container
     // alignSelf: 'center', // Center horizontally
   },
   listContainer: {
@@ -91,9 +98,9 @@ export const medicationListStyles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    
+
   },
-  
+
 });
 
 export const modalStyles = StyleSheet.create({
@@ -137,7 +144,7 @@ export const modalStyles = StyleSheet.create({
   },
   datePicker: {
     flex: 1,
-    
+
   },
   datePickerText: {
     color: '#CCC',
@@ -147,7 +154,7 @@ export const modalStyles = StyleSheet.create({
   },
 
   buttonContainer: {
-    flex: 1/3,
+    flex: 1 / 3,
     // flexDirection: 'row',
     // justifyContent: 'space-around',
   },
@@ -155,7 +162,7 @@ export const modalStyles = StyleSheet.create({
   button: {
     fontSize: 16,
     padding: 15,
-    
+
   }
 
 });
@@ -163,42 +170,39 @@ export const modalStyles = StyleSheet.create({
 export const cameraStyles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#e0f7fa',  // Light background color
+    alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#000',
   },
   camera: {
-    flex: 8,
-    borderRadius: 20,
+    flex: 1,
+    width: '100%',
   },
   buttonContainer: {
-    // flex: 1,
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    // alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.6)',
-    paddingVertical: 15,
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    marginBottom: 20,
+    width: '100%',
   },
   button: {
-    flex: 1,
-    marginHorizontal: 10,
-    backgroundColor: '#1E90FF',
-    paddingVertical: 12,
+    backgroundColor: '#00796b',  // Button background
+    padding: 10,
     borderRadius: 8,
-    alignItems: 'center'
+    margin: 10,
   },
   buttonText: {
-    color: 'white',
+    color: '#fff',  // Button text color
     fontSize: 16,
     fontWeight: 'bold',
   },
   resultContainer: {
-    flex: 1,
-    justifyContent: 'center',
+    padding: 10,
     alignItems: 'center',
-    borderColor: 'white',
-    borderWidth: 2,
-    borderRadius: 10,
-  }
-
-
+  },
+  resultText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+  },
 });

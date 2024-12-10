@@ -3,15 +3,16 @@
 // import runModel  from '@/hooks/runModel';
 const processPhoto = async (base64: string) => {
   try {
-    return 'viagra'
+    return 'Advil'
 
     // await tf.ready();
     // // Decode base64 image to Tensor
     // const imageBuffer = tf.util.encodeString(base64, 'base64').buffer;
     // const imageTensor = decodeJpeg(new Uint8Array(imageBuffer));
 
-    // // Resize the image to the input size of your CNN (e.g., 224x224 for many models)
-    // const resizedImage = tf.image.resizeBilinear(imageTensor, [224, 224]);
+    // // Resize the image to the input size of your CNN (e.g., 224x224 for many
+    // models) const resizedImage = tf.image.resizeBilinear(imageTensor, [224,
+    // 224]);
 
     // // Normalize pixel values to [0, 1] or [-1, 1] depending on the model
     // const normalizedImage = resizedImage.div(tf.scalar(255));

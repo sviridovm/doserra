@@ -1,8 +1,8 @@
 import { GestureHandlerRootView, ScrollView } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { View, Text, StyleSheet, Pressable, Modal, Alert } from 'react-native';
+import { View, Text, StyleSheet, Pressable, Modal, Alert, TextInput, TextComponent } from 'react-native';
 import { useLocalSearchParams, router } from 'expo-router';
-import { SQLiteProvider, useSQLiteContext } from 'expo-sqlite';
+import { openDatabaseSync, SQLiteProvider, useSQLiteContext } from 'expo-sqlite';
 import { useEffect, useState } from 'react';
 import { Medication, MedicationIntake } from '../../utils/types';
 // import { styles } from '@/styles/commons';
@@ -10,18 +10,55 @@ import { Medication, MedicationIntake } from '../../utils/types';
 export default function DetailsScreen() {
   const medicationJSON = useLocalSearchParams().medication?.toString();
   console.log('----------------------------')
-  console.log(medicationJSON);
+  //console.log(medicationJSON);
   const medication = JSON.parse(medicationJSON) as Medication;
+
+  const [editModal, setEditModal] = useState(false);
+
+  const[name, setName] = useState(medication.name);
+  const[interval, setInterval] = useState(medication.interval);
+  const[dosage, setDosage] = useState(medication.dosage);
+  const[id, setId] = useState(medication.id);
+
+  const [temp, setTemp] = useState(false);
+
   // console.log(medication);
   // const medication = medicationJSON;
 
+
+
   const editMed = (med : Medication) => {
-    // Your edit medication logic here
-    console.log('Edit medication:', med);
-    // For example, navigate to an edit screen or open a form modal
+    setEditModal(true);
   };
+
+  async function handleSave() {
+    const db = await openDatabaseSync('medications.db');
+    // Save edited medication to the database
   
+    // Assuming db is the SQLite context
+      db.runSync(
+        'UPDATE medications SET name = ?, interval = ?, dosage = ? WHERE id = ?',
+        [name, interval, dosage, id]
+      )
+
+      const res = await db.getFirstSync<Medication>('SELECT * FROM medications WHERE id = ?', [id]);
+      console.log(res);
+        // Optionally, update the medication in the local state to reflect the changes
+        // Update medication state if necessary here
+  
+        // Close the modal after saving
+        setEditModal(false);
+
+        if (res) {
+          setName(res.name);
+        }
+        // Optionally, show a success message
+        Alert.alert("Medication saved successfully!");
+    }
+  
+
   return (
+
     <GestureHandlerRootView>
       <ScrollView>
         <SQLiteProvider databaseName='medications.db'>
@@ -31,9 +68,43 @@ export default function DetailsScreen() {
                 <Text style={styles.editButtonText}>Edit</Text>
               </Pressable>
           </View>
-          <MedicationDetails {...medication}/>
+          <MedicationDetails medication={medication}/>
         </SQLiteProvider>
       </ScrollView>
+      <Modal animationType='slide'
+             transparent = {true}
+             visible={editModal}
+             onRequestClose={() => setEditModal(!editModal)}>
+
+<View style={styles.modalOverlay}>
+        <View style={styles.modalContent}>
+          <Text style={styles.modalText}>Edit Medication</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Name"
+            value={name}
+            onChangeText={(text) => setName(text)}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Dosage"
+            value={dosage.toString()}
+            onChangeText={(text) => setDosage(Number(text))} 
+          />
+          <Pressable
+            style={[styles.button, styles.buttonClose, {backgroundColor: '#00796b'}]}
+            onPress={handleSave}>
+            <Text style={styles.textStyle}>Save</Text>
+          </Pressable>
+          <Pressable
+            style={[styles.button, styles.buttonClose, {backgroundColor: '#f44336'}]}
+            onPress={() => setEditModal(false)}>
+            <Text style={styles.textStyle}>Cancel</Text>
+          </Pressable>
+        </View>
+      </View>
+
+      </Modal>
     </GestureHandlerRootView>
   );
 }
@@ -41,7 +112,7 @@ export default function DetailsScreen() {
   
 
 
-const MedicationDetails = (medication: Medication) => {
+const MedicationDetails = ({ medication }: { medication: Medication}) => {
   //! PLACEHOLDER
   const username = '1';
   const db = useSQLiteContext();
@@ -51,9 +122,27 @@ const MedicationDetails = (medication: Medication) => {
     null
   );
 
+  const [confrimDel, setConfirmDel] = useState(false);  
+
+      // Handle Delete Logic
+      const handleDelete = () => {
+
+        console.log('Deleting medication with id: ', medication.id);
+        // set db to be the database
+        const db = openDatabaseSync('medications.db');
+        // delete the medication from the database
+        db.runSync('DELETE FROM medications WHERE id = ?', [medication.id]);
+  
+        /// route back to home
+        router.replace('/home');
+      };
+
+  const medication_obj = db.getFirstSync<Medication>('SELECT * FROM medications WHERE id = ?', [medication.id]);
+
   useEffect(() => {
     const fetchIntakes = async() => {
       try {
+        console.log('Fetching intakes for medications: ', medication);
 
         const res_intakes = await db.getAllAsync<MedicationIntake>('SELECT * FROM medication_intake WHERE medication_id = ?', [medication.id]);
         
@@ -74,7 +163,7 @@ const MedicationDetails = (medication: Medication) => {
       }
     }
     fetchIntakes();
-  }, [db]);
+  }, [db, medication]);
 
 
   const getBackgroundColor = (intake: MedicationIntake) => {
@@ -145,11 +234,16 @@ const MedicationDetails = (medication: Medication) => {
     setModalVisible(false);
   };
 
+  const handleCancelDel = () => {
+    setSelectedIntake(null);
+    setConfirmDel(false);
+  };
+
 
   return (
     <View>
-      <Text style={styles.medicationHeader}>{medication.name}</Text>
-      <Text style={styles.dosageText}>Dosage: {medication.dosage} mg</Text>
+      {medication_obj && <Text style={styles.medicationHeader}>{medication_obj.name}</Text>}
+      {medication_obj && <Text style={styles.dosageText}>Dosage: {medication_obj.dosage} mg</Text>}
       <View style={styles.grid}>
         {intakes.map((intake) => (
           <Pressable
@@ -168,11 +262,23 @@ const MedicationDetails = (medication: Medication) => {
         ))}
       </View>
 
+
+    <View style = {{flexDirection: 'row', justifyContent: 'space-between', marginTop: 20, marginRight: 50, marginLeft: 50}}>
       <Pressable onPress={() => router.replace("/home")}>
-        <Text style={[styles.intakeText, { color: "#4A90E2", marginTop: 20 }]}>
+        <Text style={[styles.button, styles.pagebutton, { color: "white", fontWeight: "bold", marginTop: 20 }]}>
           Back
         </Text>
       </Pressable>
+
+      <Pressable 
+      onPress={() => setConfirmDel(true)}>
+        <Text style={[styles.button, styles.pagebutton, { backgroundColor: "", fontWeight: "bold", marginTop: 20 }]}>
+          Delete
+        </Text>
+      </Pressable>
+    </View>
+
+
 
       {/* Modal */}
       <Modal
@@ -203,19 +309,46 @@ const MedicationDetails = (medication: Medication) => {
           </View>
         </View>
       </Modal>
+
+
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={confrimDel}
+        onRequestClose={handleDelete}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalText}>
+              Are you sure you want to delete this medication?
+            </Text>
+            <View style={styles.modalActions}>
+              <Pressable
+                style={[styles.modalButton, styles.cancelButton]}
+                onPress={handleCancelDel}
+              >
+                <Text style={styles.buttonText}>No</Text>
+              </Pressable>
+              <Pressable
+                style={[styles.modalButton, styles.confirmButton]}
+                onPress={handleDelete}
+              >
+                <Text style={styles.buttonText}>Yes</Text>
+              </Pressable>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
 
-export function CountdownTimer() {
-  const medication = String(useLocalSearchParams());
-}
 
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f5f5f5", // Light background for better contrast
+    backgroundColor: "#e0f7fa", // Light cyan background for a pleasant look
     padding: 16,
   },
   headerContainer: {
@@ -224,18 +357,17 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 20,
     marginTop: 45,
+    paddingHorizontal: 16,
   },
   header: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "#333",
-    textAlign: "center",
+    color: "#00796b", // Dark teal color for header text
   },
   editButton: {
-    backgroundColor: "#4A90E2",
-    padding: 10,
+    backgroundColor: "#00796b", // Dark teal button color
+    padding: 12,
     borderRadius: 8,
-    marginRight: 10,
   },
   editButtonText: {
     color: "white",
@@ -246,6 +378,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "space-between", // Evenly spaced items
+    paddingHorizontal: 16,
   },
   gridItem: {
     width: "30%", // Fits 3 items per row
@@ -253,7 +386,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginVertical: 8,
-    backgroundColor: "#4A90E2", // Attractive blue shade
+    backgroundColor: "#00796b", // Attractive dark teal shade
     borderRadius: 12,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
@@ -263,7 +396,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   intakeText: {
-    color: "#fff", // White text for contrast
+    color: "#e0f7fa", // Light cyan text for contrast
     fontSize: 12,
     fontWeight: "bold",
     textAlign: "center",
@@ -320,7 +453,7 @@ const styles = StyleSheet.create({
   medicationHeader: {
     fontSize: 22,
     fontWeight: "bold",
-    color: "#4A90E2",
+    color: "#00796b", // Dark teal color for medication header
     textAlign: "center",
     marginVertical: 10,
   },
@@ -329,5 +462,56 @@ const styles = StyleSheet.create({
     color: "#555",
     marginBottom: 20,
     textAlign: "center",
+  },
+  input: {
+    height: 40,
+    marginVertical: 12,
+    borderWidth: 1,
+    padding: 10,
+    width: 200,
+    borderRadius: 8,
+    borderColor: "#00796b", // Dark teal border color
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 35,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  textStyle: {
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  button: {
+    borderRadius: 8,
+    padding: 10,
+    elevation: 2,
+  },
+  pagebutton: {
+    backgroundColor: '#00796b', // Dark teal button color
+    marginTop: 10,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+  },
+  deletebutton: {
+    backgroundColor: '#f44336', 
+    marginTop: 10,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+  },
+  buttonClose: {
+    marginTop: 10,
   },
 });

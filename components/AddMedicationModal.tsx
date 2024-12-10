@@ -1,5 +1,5 @@
 import { modalStyles } from "@/styles/commons";
-import { Button, Modal, SafeAreaView, TextInput, View, Text, Alert } from "react-native";
+import { Pressable, Modal, SafeAreaView, TextInput, View, Text, Alert, StyleSheet } from "react-native";
 import { useSQLiteContext, SQLiteDatabase } from "expo-sqlite";
 import { Medication } from "@/utils/types";
 import { defaultMedication } from "@/utils/types";
@@ -100,6 +100,7 @@ export default function AddMedicationModal({
 
               <TextInput
                 placeholder='Medication Name'
+                placeholderTextColor="#CCC"
                 onChangeText={(text) => setNewMedication({...newMedication, name: text})}
                 // value={newMedication.name}
                 autoFocus={false}
@@ -111,6 +112,7 @@ export default function AddMedicationModal({
   
               <TextInput
                 placeholder='Dosage'
+                placeholderTextColor="#CCC"
                 keyboardType='numeric'
                 onChangeText={(text) => setNewMedication({...newMedication, dosage: parseInt(text)})}
                 style={[modalStyles.input, {borderColor: dosageFocused ? '#34ebae' : '#CCC'}]}
@@ -121,6 +123,7 @@ export default function AddMedicationModal({
   
               <TextInput
                 placeholder="Interval"
+                placeholderTextColor="#CCC"
                 keyboardType="numeric"
                 onChangeText={(text) => setNewMedication({...newMedication, interval: parseInt(text)})}
                 style={[modalStyles.input, {borderColor: intervalFocused ? '#34ebae' : '#CCC'}]}
@@ -153,32 +156,63 @@ export default function AddMedicationModal({
                 
               />
               </View>
-  
-
 
           </View>
-          <View style={modalStyles.buttonContainer}>
+          <SafeAreaView style={styles.container}>
+          <Pressable
+            style={[styles.button, {backgroundColor: '#00796b'}]}
+            onPress={() => handleAddMedication(db)}
+            disabled={newMedication === defaultMedication}
+          >
+            <Text style={styles.buttonText}>Add</Text>
+          </Pressable>
 
-              <Button
-                title='Add'
-                onPress={() => handleAddMedication(db)}
-                disabled={(newMedication===defaultMedication)}
-              />
-              
-              <Button
-                title='Cancel'
-                onPress={() => {
-                  // setNewMedication(defaultMedication);
-                  setModalVisible(false);
-                }}
-                />
-              
-          </View>
+          <Pressable
+            style={[styles.button, {backgroundColor: '#f44336'}]}
+            onPress={() => setModalVisible(false)}
+          >
+            <Text style={styles.buttonText}>Cancel</Text>
+          </Pressable>
+        </SafeAreaView>
           </SafeAreaView>
-  
-  
         </Modal>
   
     )
   
   }
+
+  const styles = StyleSheet.create({
+    container:{
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    title: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        marginBottom: 20,
+    },
+    content: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    text: {
+        fontSize: 16,
+        color: 'gray',
+        textAlign: 'center',
+        marginBottom: 20,
+    },
+    button: {
+        backgroundColor: '#00796b',
+        paddingVertical: 12,
+        paddingHorizontal: 20,
+        borderRadius: 5,
+        alignItems: 'center',
+    },
+    buttonText: {
+        color: 'white',
+        fontWeight: 'bold',
+        fontSize: 16,
+    },
+  });

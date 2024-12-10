@@ -1,6 +1,6 @@
 import { SQLiteProvider, useSQLiteContext } from "expo-sqlite";
 import { useState } from "react";
-import { Alert, Pressable, TextInput, View, StyleSheet, Text } from "react-native";
+import { Alert, Pressable, TextInput, View, StyleSheet, Text, ImageBackground } from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { initDatabase } from '@/hooks/initDatabase';
 import { Stack, router } from "expo-router";
@@ -8,6 +8,7 @@ import { styles } from "@/styles/commons";
 import bcrypt from 'react-native-bcrypt';
 
 export default function HomeScreen() {
+    const backgroundimage = require('@/assets/images/login.png');
 
     return (
         <SQLiteProvider databaseName="medications.db" onInit={initDatabase}>
@@ -27,6 +28,7 @@ const LoginScreen = () => {
     const db = useSQLiteContext();
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const backgroundimage = require('@/assets/images/login.png');
     
 
 
@@ -63,9 +65,9 @@ const LoginScreen = () => {
             console.log('Error during Login : ', error);
         }
     }
-
+    //4CAF50
     return (
-        <SafeAreaView style={styles.container}>
+            <ImageBackground source={backgroundimage} style={styles.backgroundImage}>
             <Text style={styles.title}>Login</Text>
             <TextInput 
                 style={styles.input}
@@ -87,7 +89,7 @@ const LoginScreen = () => {
             <Pressable style={styles.link} onPress={() => router.replace('/auth/register')}>
                 <Text style={styles.linkText}>Don't have an account? Register</Text>
             </Pressable>
-        </SafeAreaView>
+            </ImageBackground>
         
     )
 }
