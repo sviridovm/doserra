@@ -4,9 +4,9 @@ export const styles = StyleSheet.create({
   title: {
     fontSize: 32,
     fontWeight: 'bold',
-    marginTop: 20,
-    marginBottom: 2,
-    alignSelf: 'center',
+    justifyContent: 'flex-end',
+    marginTop: 350,
+    alignItems: 'center',
     color: '#333',
   },
   input: {

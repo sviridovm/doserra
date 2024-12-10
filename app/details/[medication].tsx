@@ -263,7 +263,7 @@ const MedicationDetails = ({ medication }: { medication: Medication}) => {
       </View>
 
 
-    <View style = {{flexDirection: 'row', justifyContent: 'space-between', marginTop: 20, marginRight: 50, marginLeft: 50}}>
+    <View style = {{flexDirection: 'row', justifyContent: 'space-between', marginTop: 20, marginRight: 10, marginLeft: 10}}>
       <Pressable onPress={() => router.replace("/home")}>
         <Text style={[styles.button, styles.pagebutton, { color: "white", fontWeight: "bold", marginTop: 20 }]}>
           Back
@@ -272,7 +272,7 @@ const MedicationDetails = ({ medication }: { medication: Medication}) => {
 
       <Pressable 
       onPress={() => setConfirmDel(true)}>
-        <Text style={[styles.button, styles.pagebutton, { backgroundColor: "", fontWeight: "bold", marginTop: 20 }]}>
+        <Text style={[styles.button, styles.pagebutton, { backgroundColor: "#F44336", fontWeight: "bold", marginTop: 20 }]}>
           Delete
         </Text>
       </Pressable>
@@ -500,8 +500,9 @@ const styles = StyleSheet.create({
   pagebutton: {
     backgroundColor: '#00796b', // Dark teal button color
     marginTop: 10,
+    fontSize: 13,
     paddingVertical: 12,
-    paddingHorizontal: 20,
+    paddingHorizontal: 75,
     borderRadius: 8,
   },
   deletebutton: {
